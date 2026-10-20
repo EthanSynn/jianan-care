@@ -6,7 +6,7 @@
 
 **[点击打开见岸在线演示](https://jianan-care.app.workbuddy.host/)**
 
-[下载源码发布包](https://github.com/EthanSynn/jianan-care-demo/releases/latest) · [运行与部署说明](部署说明.md)
+[下载源码发布包](https://github.com/EthanSynn/jianan-care/releases/latest) · [运行与部署说明](部署说明.md)
 
 在线演示为已有公网部署，仓库包含后续优化，当前两者可能存在版本差异。
 
@@ -26,7 +26,7 @@
 
 ## GitHub 与部署
 
-[在 Render 创建部署](https://render.com/deploy?repo=https://github.com/EthanSynn/jianan-care-demo) · [浏览完整源码](https://github.com/EthanSynn/jianan-care-demo)
+[在 Render 创建部署](https://render.com/deploy?repo=https://github.com/EthanSynn/jianan-care) · [浏览完整源码](https://github.com/EthanSynn/jianan-care)
 
 完整部署步骤见 [部署说明](部署说明.md)。仓库附带 Render Blueprint 和 Dockerfile；GitHub Pages 无法运行本项目的 Node 后端。
 
