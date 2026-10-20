@@ -1,0 +1,13 @@
+{
+  "name": "jianan-web",
+  "version": "1.0.0",
+  "description": "见岸公网站 · 同源 Node 服务（静态托管 + /chat 代理）",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "private": true
+}

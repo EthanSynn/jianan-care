@@ -1,0 +1,1765 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>见岸 · 你的心灵避风港</title>
+<link rel="manifest" href="manifest.json"/>
+<meta name="theme-color" content="#0e9488"/>
+<meta name="description" content="见岸，一个愿意听你说话的 AI 心理陪伴者。匿名、温柔、不评判。"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+<meta name="apple-mobile-web-app-title" content="见岸"/>
+<link rel="apple-touch-icon" href="icon-192.png"/>
+<link rel="icon" type="image/png" href="icon-192.png"/>
+<style>
+:root{--teal:#0e9488;--teal-deep:#0b756c;--teal-soft:#e6f5f3;--teal-dark:#143b38;--ink:#1f2d2b;--muted:#6b7c79;--line:#e3ecea;--bg:#f4f8f7;--danger:#e2483d;}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{margin:0;height:100%;}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;background:radial-gradient(120% 120% at 50% 0%,#cfe9e4,#a9d3cd 40%,#7fb7af);display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;color:var(--ink);}
+.phone{width:390px;height:820px;max-height:94vh;background:#0c1311;border-radius:46px;padding:12px;box-shadow:0 40px 90px rgba(11,40,38,.45),inset 0 0 0 2px #2a3b38;}
+.screen{position:relative;width:100%;height:100%;border-radius:36px;background:var(--bg);overflow:hidden;display:flex;flex-direction:column;}
+.statusbar{height:32px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 22px;font-size:13px;font-weight:600;color:var(--teal-dark);background:#fff;}
+.statusbar .dots{display:flex;gap:5px;}
+.statusbar .dots i{width:6px;height:6px;border-radius:50%;background:var(--teal);display:block;}
+.app{flex:1;position:relative;overflow:hidden;}
+.page{position:absolute;inset:0;overflow-y:auto;padding:18px 18px 96px;opacity:0;transform:translateX(12px);pointer-events:none;transition:opacity .25s,transform .25s;}
+.page.active{opacity:1;transform:none;pointer-events:auto;}
+.page::-webkit-scrollbar{width:0;}
+.tabbar-spacer{height:60px;}
+.muted{color:var(--muted);font-size:12.5px;}
+.section-t{font-size:14px;font-weight:700;color:var(--muted);margin:22px 2px 10px;}
+
+/* 欢迎 */
+#p-welcome{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:16px;background:linear-gradient(170deg,#0e9488,#0b756c 45%,#143b38);color:#fff;padding-bottom:110px;}
+#p-welcome .logo{width:110px;height:110px;}
+#p-welcome h1{font-size:32px;letter-spacing:6px;margin:0;font-weight:700;}
+#p-welcome p{opacity:.9;font-size:13.5px;letter-spacing:2px;margin:0;}
+#p-welcome .enter{margin-top:22px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.4);color:#fff;padding:11px 38px;border-radius:30px;font-size:14.5px;cursor:pointer;}
+#p-welcome .enter:active{transform:scale(.97);}
+
+/* 首页 */
+.hero{text-align:center;margin-bottom:18px;}
+.hero .brand{font-size:30px;font-weight:800;color:var(--teal);letter-spacing:2px;}
+.hero .slogan{font-size:14px;font-weight:600;color:var(--ink);margin-top:6px;}
+.now-card{background:linear-gradient(135deg,#e6f4f1,#f3f7f6);border:1px solid var(--line);border-radius:22px;padding:18px;}
+.now-q{font-size:17px;font-weight:700;}
+.now-opts{display:flex;gap:10px;margin-top:14px;}
+.now-opt{flex:1;background:#fff;border:2px solid transparent;border-radius:16px;padding:12px 0;text-align:center;cursor:pointer;}
+.now-opt.on{border-color:var(--teal);background:var(--teal-soft);}
+.now-opt:active{transform:scale(.96);}
+.now-e{display:block;font-size:24px;}
+.now-t{display:block;font-size:12.5px;color:var(--muted);margin-top:3px;}
+.now-opt.on .now-t{color:var(--teal);font-weight:700;}
+.now-suggest{margin-top:14px;background:#fff;border-radius:16px;padding:14px;display:flex;align-items:center;gap:12px;}
+.suggest-text{flex:1;font-size:13px;line-height:1.6;}
+.suggest-btn{flex:none;background:var(--teal);color:#fff;font-size:12.5px;font-weight:600;padding:9px 16px;border-radius:20px;cursor:pointer;}
+.now-foot{margin-top:12px;font-size:11.5px;color:var(--muted);}
+.now-foot b{color:var(--teal);cursor:pointer;}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.box3{background:#fff;border-radius:16px;padding:14px 6px;text-align:center;cursor:pointer;box-shadow:0 4px 14px rgba(20,59,56,.05);}
+.box3:active{transform:scale(.96);background:var(--teal-soft);}
+.box3 .e{font-size:24px;display:block;}
+.box3 .t{font-size:12.5px;font-weight:700;color:var(--teal-dark);margin-top:5px;}
+.box3 .d{font-size:10.5px;color:var(--muted);margin-top:2px;line-height:1.3;}
+.read-list{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 14px rgba(20,59,56,.05);}
+.read-item{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--line);cursor:pointer;}
+.read-item:last-child{border-bottom:none;}
+.read-item:active{background:var(--teal-soft);}
+.read-title{font-size:13.5px;flex:1;}
+.read-arrow{color:var(--muted);margin-left:10px;}
+.sos{margin-top:22px;display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;border-radius:18px;background:#fdecec;border:1px solid #f3b5b5;cursor:pointer;}
+.sos:active{opacity:.7;}
+.sos .t{font-size:13px;font-weight:700;color:var(--danger);}
+
+/* 对话 */
+.chat-head{display:flex;align-items:center;gap:10px;padding:2px 0 10px;}
+.chat-head .ava{width:38px;height:38px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;color:#fff;font-size:17px;}
+.chat-head .nm{font-weight:700;color:var(--teal-dark);font-size:15px;}
+.chat-head .tag{font-size:11.5px;color:var(--muted);}
+.persona-bar{display:flex;gap:7px;margin-bottom:10px;}
+.pchip2{background:#fff;border:1px solid var(--line);border-radius:18px;padding:6px 12px;font-size:12px;color:var(--teal-deep);cursor:pointer;white-space:nowrap;}
+.pchip2.on{background:var(--teal);color:#fff;border-color:var(--teal);}
+.trend-chip{background:var(--teal-soft);border-radius:12px;padding:8px 11px;font-size:12px;color:var(--teal-deep);margin-bottom:10px;cursor:pointer;}
+.trend-chip b{color:var(--teal);}
+/* IM 气泡：己方在右、对方在左，带头像与时间 */
+.msg-row{display:flex;align-items:flex-start;gap:8px;margin-bottom:12px;}
+.msg-row.me{flex-direction:row-reverse;}
+.msg-ava{flex:none;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;background:var(--teal);color:#fff;box-shadow:0 2px 6px rgba(20,59,56,.12);user-select:none;}
+.msg-row.me .msg-ava{background:var(--teal-soft);color:var(--teal-deep);border:1px solid var(--line);box-shadow:none;}
+.msg-col{display:flex;flex-direction:column;min-width:0;max-width:76%;}
+.msg-row.ai .msg-col{align-items:flex-start;}
+.msg-row.me .msg-col{align-items:flex-end;}
+.msg-meta{display:flex;align-items:center;gap:5px;font-size:10.5px;color:var(--muted);margin:0 2px 4px;line-height:1;}
+
+.msg .bubble,.msg-row .bubble{max-width:100%;padding:10px 13px;border-radius:15px;font-size:13.5px;line-height:1.55;white-space:pre-wrap;word-break:break-word;}
+.msg-row.ai .bubble{background:#fff;border-bottom-left-radius:4px;box-shadow:0 3px 10px rgba(20,59,56,.05);}
+.msg-row.me .bubble{background:var(--teal);color:#fff;border-bottom-right-radius:4px;}
+.msg-row.ai .bubble.typing{display:flex;align-items:center;gap:5px;padding:12px 14px;}
+.msg-row.ai .bubble.typing i{font-style:normal;font-size:12px;color:#789;margin-left:2px;}
+.msg-row.ai .bubble.typing span{width:6px;height:6px;border-radius:50%;background:#9bb;display:inline-block;animation:td 1.1s infinite ease-in-out;}
+.msg-row.ai .bubble.typing span:nth-child(2){animation-delay:.18s;}
+.msg-row.ai .bubble.typing span:nth-child(3){animation-delay:.36s;}
+@keyframes td{0%,60%,100%{transform:translateY(0);opacity:.5;}30%{transform:translateY(-4px);opacity:1;}}
+.retry{margin-top:6px;font-size:11px;color:#b4442f;background:#fdecec;border:1px solid #f3b5b5;padding:5px 12px;border-radius:16px;cursor:pointer;}
+.ai-notice{padding:7px 12px;margin:0 0 8px;background:#f2f5f6;border:1px solid #e3ebea;border-radius:10px;font-size:11.5px;color:#6b7a78;line-height:1.5;text-align:center;}
+.crisis-card{background:#fff4f3;border:1px solid #f3c4c0;border-radius:16px;padding:13px;margin-bottom:10px;}
+.crisis-card .h{color:var(--danger);font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:space-between;}
+.crisis-card .x{color:#a86060;font-size:13px;cursor:pointer;padding:0 4px;}
+.crisis-card .p{font-size:12.5px;color:#7a3a35;margin:7px 0 9px;line-height:1.55;}
+.crisis-card .call{display:block;text-align:center;background:var(--danger);color:#fff;border-radius:10px;padding:10px;font-weight:600;font-size:13px;cursor:pointer;}
+.quick-bar{display:flex;gap:7px;overflow-x:auto;padding:2px 0 8px;}
+.quick-bar::-webkit-scrollbar{height:0;}
+.quick-chip{flex:none;background:#fff;border:1px solid var(--line);border-radius:18px;padding:7px 12px;font-size:12px;color:var(--teal-deep);cursor:pointer;white-space:nowrap;}
+.chat-actions{display:flex;gap:8px;margin:6px 0 10px;}
+.act{flex:1;text-align:center;font-size:12px;color:var(--teal);background:var(--teal-soft);padding:9px 0;border-radius:20px;cursor:pointer;}
+.input-bar{position:absolute;left:0;right:0;bottom:62px;z-index:25;display:flex;gap:8px;padding:10px 14px;background:rgba(255,255,255,.96);border-top:1px solid var(--line);}
+.voice-btn{flex:none;width:38px;height:38px;border-radius:50%;background:var(--teal-soft);display:flex;align-items:center;justify-content:center;font-size:17px;cursor:pointer;}
+.voice-btn.recording{background:var(--danger);animation:voicePulse 1.1s ease-in-out infinite;}
+.input-bar input{flex:1;border:none;background:var(--bg);border-radius:18px;padding:10px 14px;font-size:13.5px;outline:none;}
+.input-bar .send{background:var(--teal);color:#fff;border:none;border-radius:18px;padding:0 16px;font-size:13.5px;font-weight:600;cursor:pointer;}
+.voice-bar{position:absolute;left:12px;right:12px;bottom:112px;z-index:26;display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--teal-soft);border-radius:16px;}
+.voice-wave{display:flex;align-items:center;gap:4px;height:22px;}
+.voice-wave .vw{width:3px;border-radius:2px;background:var(--teal);animation:voiceBar .9s ease-in-out infinite;}
+.voice-wave .vw:nth-child(1){height:9px;animation-delay:0s;}
+.voice-wave .vw:nth-child(2){height:17px;animation-delay:.15s;}
+.voice-wave .vw:nth-child(3){height:12px;animation-delay:.3s;}
+.voice-wave .vw:nth-child(4){height:19px;animation-delay:.45s;}
+.voice-wave .vw:nth-child(5){height:8px;animation-delay:.6s;}
+.voice-tip{flex:1;font-size:12.5px;color:var(--teal-deep);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.voice-cancel{flex:none;font-size:12.5px;color:var(--muted);cursor:pointer;padding:0 4px;}
+@keyframes voiceBar{0%,100%{transform:scaleY(.45);}50%{transform:scaleY(1);}}
+@keyframes voicePulse{0%,100%{box-shadow:0 0 0 0 rgba(226,72,61,.45);}50%{box-shadow:0 0 0 10px rgba(226,72,61,0);}}
+.demo-btn{font-size:11px;color:var(--muted);text-align:center;margin:2px 0 8px;cursor:pointer;text-decoration:underline;}
+
+/* 对话页：消息区固定高度、内部滚动；新消息自动滚到底 */
+#p-chat{display:flex;flex-direction:column;overflow:hidden;padding-bottom:124px;}
+#p-chat .chat-head,#p-chat .ai-status,#p-chat .ai-notice,#p-chat .persona-bar,#p-chat .trend-chip,#p-chat .quick-bar,#p-chat .chat-actions,#p-chat .demo-btn{flex:none;}
+#p-chat .ai-status{align-self:flex-start;}
+#p-chat .tabbar-spacer{display:none;}
+.chat-scroll{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:2px 2px 8px;}
+.chat-scroll::-webkit-scrollbar{width:0;}
+/* 警示条：追加在最新一条消息之后，按时间顺序依次排列 */
+.chat-alert{display:flex;align-items:flex-start;gap:7px;margin-top:8px;background:#fff8ee;border:1px solid #f0d9b6;border-radius:12px;padding:9px 12px;font-size:12px;color:#8a5a1a;line-height:1.55;animation:alertIn .22s ease-out;}
+.chat-alert.warn{background:#fdecec;border-color:#f3b5b5;color:#a33f31;}
+.chat-alert .ca-ico{flex:none;font-size:13px;line-height:1.45;}
+.chat-alert .ca-txt{min-width:0;word-break:break-word;}
+@keyframes alertIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+
+/* 社区 */
+.filters{display:flex;gap:6px;overflow-x:auto;padding:2px 0 10px;}
+.filters::-webkit-scrollbar{height:0;}
+.fchip{flex:none;background:#fff;border:1px solid var(--line);border-radius:16px;padding:6px 12px;font-size:12px;color:var(--teal-deep);cursor:pointer;}
+.fchip.on{background:var(--teal);color:#fff;border-color:var(--teal);}
+.wall{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px;}
+.wall::-webkit-scrollbar{height:0;}
+.wcard{flex:none;width:190px;background:#fff;border-radius:14px;padding:12px;box-shadow:0 4px 12px rgba(20,59,56,.06);}
+.wcard .wm{font-size:11.5px;color:var(--teal);font-weight:700;}
+.wcard .wt{font-size:12.5px;margin-top:5px;line-height:1.5;}
+.wcard .wf{display:flex;justify-content:space-between;align-items:center;margin-top:9px;}
+.wcard .wfrom{font-size:10px;color:var(--muted);}
+.wcard .wdel{font-size:10.5px;color:#b4442f;cursor:pointer;}
+.hint-box{font-size:11.5px;color:var(--muted);line-height:1.6;margin-top:10px;}
+.article{display:flex;align-items:center;gap:11px;background:#fff;border-radius:14px;padding:12px;margin-bottom:9px;box-shadow:0 3px 10px rgba(20,59,56,.04);cursor:pointer;}
+.article .em{width:38px;height:38px;border-radius:10px;background:var(--teal-soft);display:flex;align-items:center;justify-content:center;font-size:19px;flex:none;}
+.article .at{font-weight:600;font-size:13px;color:var(--teal-dark);}
+.article .ad{font-size:11px;color:var(--muted);margin-top:2px;}
+.article .ar{margin-left:auto;color:var(--muted);}
+.add-btn{background:var(--teal);color:#fff;text-align:center;padding:11px;border-radius:14px;font-size:13.5px;font-weight:600;cursor:pointer;margin-top:10px;}
+
+/* 关于 */
+.brand-box{text-align:center;padding:14px 0 6px;}
+.brand-box .lg{width:70px;height:70px;}
+.brand-box .nm{font-size:20px;font-weight:700;color:var(--teal-dark);letter-spacing:2px;margin-top:8px;}
+.brand-box .sl{font-size:12px;color:var(--muted);margin-top:4px;}
+.icp-footer{text-align:center;font-size:11px;color:#8aa29d;margin-top:12px;padding-bottom:18px;cursor:pointer;}
+.icp-footer:hover{color:var(--teal);}
+.lk{display:flex;align-items:center;padding:13px 2px;border-bottom:1px solid var(--line);font-size:13.5px;color:var(--teal-dark);cursor:pointer;}
+.lk .ar{margin-left:auto;color:var(--muted);}
+.data-actions{display:flex;gap:10px;}
+.dbtn{flex:1;text-align:center;font-size:13px;font-weight:600;padding:11px 0;border-radius:20px;cursor:pointer;}
+.dbtn.ghost{background:var(--teal-soft);color:var(--teal);}
+.dbtn.danger{background:#fdecec;color:var(--danger);border:1px solid #f3b5b5;}
+.dbtn.wide{margin-top:10px;}
+.dbtn.is-busy{opacity:.45;pointer-events:none;}
+
+/* 浮层：文章 / 练习 */
+.sheet{position:absolute;inset:0;background:#fff;z-index:30;transform:translateY(100%);transition:transform .28s;overflow-y:auto;padding:16px 18px 36px;}
+.sheet.open{transform:none;}
+.sheet .back{font-size:13.5px;color:var(--teal);cursor:pointer;display:inline-block;margin-bottom:8px;}
+.sheet h2{font-size:19px;color:var(--teal-dark);margin:4px 0;}
+.sheet .meta{font-size:11.5px;color:var(--muted);margin-bottom:14px;}
+.sheet h3{font-size:15px;color:var(--teal-deep);margin:16px 0 5px;}
+.sheet p{font-size:13.5px;line-height:1.7;}
+.sheet blockquote{margin:11px 0;padding:9px 13px;border-left:4px solid var(--teal);background:var(--teal-soft);border-radius:0 10px 10px 0;font-size:13px;color:var(--teal-deep);}
+.sheet .wall-link{display:block;text-align:center;margin-top:18px;background:var(--teal);color:#fff;border-radius:12px;padding:12px;font-weight:600;font-size:13.5px;cursor:pointer;}
+.sheet .disclaim{margin-top:16px;font-size:11px;color:var(--muted);line-height:1.6;border-top:1px solid var(--line);padding-top:11px;}
+
+.exercise{position:absolute;inset:0;z-index:40;background:linear-gradient(170deg,#0e9488,#0b756c 45%,#143b38);color:#fff;transform:translateY(100%);transition:transform .28s;overflow-y:auto;padding:18px 18px 36px;}
+.exercise.open{transform:none;}
+.ex-head{display:flex;align-items:center;gap:12px;font-size:16px;font-weight:700;margin-bottom:14px;}
+.ex-back{color:#dff5f2;cursor:pointer;font-size:15px;font-weight:600;}
+.rhythm{display:flex;gap:8px;margin-bottom:18px;}
+.rchip{flex:1;text-align:center;padding:9px 0;border-radius:14px;background:rgba(255,255,255,.14);font-size:13px;cursor:pointer;border:1px solid transparent;}
+.rchip.on{background:rgba(255,255,255,.26);border-color:#fff;}
+.breath-stage{display:flex;align-items:center;justify-content:center;height:280px;}
+.breath-circle{width:150px;height:150px;border-radius:50%;background:radial-gradient(circle at 50% 40%,#aef0e8,#4fc4b6);display:flex;flex-direction:column;align-items:center;justify-content:center;transform:scale(1);box-shadow:0 0 50px rgba(174,240,232,.5);}
+.breath-circle span:first-child{font-size:20px;font-weight:700;}
+.bcount{font-size:30px;font-weight:300;line-height:1;}
+.breath-tip{text-align:center;font-size:13.5px;opacity:.92;margin:14px 18px;line-height:1.6;min-height:40px;}
+.breath-cycles{text-align:center;font-size:13px;opacity:.85;}
+.breath-cycles b{font-size:16px;}
+.ground-prog{display:flex;gap:6px;margin-bottom:20px;}
+.gp{flex:1;height:6px;border-radius:3px;background:rgba(255,255,255,.2);}
+.gp.on{background:#fff;}
+.ground-card{background:rgba(255,255,255,.12);border-radius:22px;padding:26px 20px;text-align:center;}
+.ground-num{font-size:62px;font-weight:800;line-height:1;}
+.ground-label{font-size:20px;font-weight:700;margin:8px 0 14px;}
+.ground-hint{font-size:14px;opacity:.92;line-height:1.7;min-height:48px;}
+.ground-btn{margin-top:20px;background:#fff;color:#0b756c;text-align:center;padding:13px;border-radius:14px;font-weight:700;cursor:pointer;}
+.ground-foot{text-align:center;font-size:12.5px;opacity:.8;margin-top:18px;line-height:1.6;}
+.presets{display:flex;gap:8px;margin-bottom:14px;}
+.pchip{flex:1;text-align:center;padding:10px 0;border-radius:14px;background:rgba(255,255,255,.14);font-size:13px;cursor:pointer;}
+.pchip.on{background:rgba(255,255,255,.28);font-weight:700;}
+.custom-box{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:rgba(255,255,255,.12);border-radius:14px;padding:12px;margin-bottom:12px;font-size:13px;}
+.custom-box input{width:56px;text-align:center;border:none;border-radius:10px;padding:8px 4px;font-size:14px;font-weight:600;color:#0b756c;background:#fff;outline:none;}
+.task-input{display:block;width:100%;box-sizing:border-box;border:none;border-radius:14px;padding:12px 14px;font-size:13.5px;color:#0b756c;background:rgba(255,255,255,.9);outline:none;margin-bottom:12px;}
+.task-input::placeholder{color:#7a9a96;}
+.opts{display:flex;gap:8px;margin-bottom:10px;}
+.opts .opt{flex:1;text-align:center;padding:10px 6px;border-radius:12px;background:rgba(255,255,255,.14);font-size:12.5px;cursor:pointer;}
+.opts .opt.on{background:rgba(255,255,255,.3);font-weight:700;}
+.pomo-stage{position:relative;display:flex;align-items:center;justify-content:center;height:230px;}
+.pomo-ring{width:200px;height:200px;transform:rotate(-90deg);}
+.ring-bg{fill:none;stroke:rgba(255,255,255,.18);stroke-width:8;}
+.ring-fg{fill:none;stroke:#aef0e8;stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset 1s linear;}
+.pomo-time{position:absolute;font-size:40px;font-weight:300;letter-spacing:1px;}
+.pomo-phase{position:absolute;bottom:48px;font-size:14px;font-weight:600;color:#aef0e8;}
+.pomo-ctrl{display:flex;gap:12px;justify-content:center;margin-top:8px;}
+.pctrl{background:#fff;color:#0b756c;padding:13px 34px;border-radius:26px;font-weight:700;font-size:15px;cursor:pointer;}
+.pctrl.ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.5);}
+.pomo-done{text-align:center;font-size:13px;opacity:.85;margin-top:16px;}
+.pomo-done b{font-size:16px;}
+.m-pick{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px;}
+.m-sess{background:rgba(255,255,255,.14);border-radius:18px;padding:26px 10px;text-align:center;font-size:15px;font-weight:600;cursor:pointer;}
+.m-sess:active{background:rgba(255,255,255,.28);}
+.m-guide{text-align:center;font-size:15px;opacity:.95;line-height:1.7;margin:18px 16px;min-height:48px;}
+
+.tabbar{position:absolute;left:0;right:0;bottom:0;height:62px;background:rgba(255,255,255,.96);border-top:1px solid var(--line);display:flex;z-index:20;}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;color:var(--muted);font-size:10.5px;}
+.tab .ti{font-size:20px;line-height:1;filter:grayscale(1);opacity:.55;}
+.tab.on{color:var(--teal);}
+.tab.on .ti{filter:none;opacity:1;}
+.toast{position:absolute;left:50%;bottom:86px;transform:translateX(-50%);background:rgba(20,59,56,.92);color:#fff;font-size:12.5px;padding:8px 16px;border-radius:20px;opacity:0;transition:.2s;pointer-events:none;z-index:60;max-width:80%;text-align:center;}
+.toast.show{opacity:1;}
+.modal{position:absolute;inset:0;background:rgba(12,25,23,.5);z-index:70;display:none;align-items:center;justify-content:center;padding:30px;}
+.modal.show{display:flex;}
+.modal-box{background:#fff;border-radius:20px;padding:22px;width:100%;}
+.modal-t{font-size:16px;font-weight:700;color:var(--teal-dark);}
+.modal-c{font-size:13.5px;color:var(--ink);margin:10px 0 18px;line-height:1.65;white-space:pre-line;}
+.modal-btns{display:flex;gap:10px;}
+.mbtn{flex:1;text-align:center;padding:11px;border-radius:14px;font-size:13.5px;font-weight:600;cursor:pointer;}
+.mbtn.cancel{background:var(--bg);color:var(--muted);}
+.mbtn.ok{background:var(--teal);color:#fff;}
+.mbtn.danger{background:var(--danger);color:#fff;}
+/* 确认弹窗：在对话页时贴到最新消息之后（视口底部），不再居中 */
+.modal.at-latest{align-items:flex-end;padding:0 18px 124px;background:rgba(12,25,23,.34);}
+.modal.at-latest .modal-box{animation:sheetUp .22s ease-out;}
+@keyframes sheetUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:none;}}
+
+/* 设置面板 + AI 连接状态 */
+.gear{margin-left:auto;font-size:20px;cursor:pointer;opacity:.65;padding:4px 6px;flex:none;}
+.gear:active{opacity:1;}
+.ai-status{font-size:11.5px;margin:0 0 10px;padding:5px 11px;border-radius:12px;display:inline-block;cursor:pointer;}
+.ai-status.ok{background:#e7f6ee;color:#1d8a4f;}
+.ai-status.bad{background:#fdecec;color:var(--danger);}
+.ai-status.checking{background:var(--teal-soft);color:var(--teal-deep);}
+.settings{position:absolute;inset:0;background:#fff;z-index:80;transform:translateY(100%);transition:transform .28s;overflow-y:auto;padding:18px 18px 40px;}
+.settings.open{transform:none;}
+.settings .back{font-size:13.5px;color:var(--teal);cursor:pointer;display:inline-block;margin-bottom:10px;}
+.settings h2{font-size:19px;color:var(--teal-dark);margin:2px 0 4px;}
+.settings .sub{font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.6;}
+.set-row{margin:14px 0;}
+.set-row label{font-size:13px;font-weight:600;color:var(--teal-dark);display:block;margin-bottom:6px;}
+.set-row input{width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:12px;padding:11px 13px;font-size:13px;outline:none;}
+.set-row input:focus{border-color:var(--teal);}
+.set-hint{font-size:11.5px;color:var(--muted);line-height:1.6;margin-top:7px;}
+.set-link{color:var(--teal);font-size:12px;cursor:pointer;display:inline-block;margin-top:5px;}
+.set-btns{display:flex;gap:10px;margin-top:20px;}
+
+@media (max-width:520px){
+  body{padding:0;display:block;background:var(--bg);}
+  .phone{width:100%;height:100vh;height:100dvh;max-height:none;border-radius:0;padding:0;box-shadow:none;background:var(--bg);}
+  .screen{border-radius:0;}
+  .statusbar{display:none;}
+}
+/* 手机输入时不触发 iOS 自动缩放，保留背景上的操作区。 */
+#avatarChatInput {font-size:16px!important;}
+#avatarPanel button {min-height:44px;}
+@media(max-width:520px){
+  input,textarea,select {font-size:16px!important;}
+  #avatarPanel.avatar-full #avatarStatus {padding-top:max(16px,env(safe-area-inset-top))!important;}
+}
+</style>
+<style>
+#avatarPanel { flex:none; display:grid; grid-template-columns:90px 1fr; grid-template-rows:auto 1fr; gap:8px 12px; margin:6px 0; padding:8px; border:1px solid #d6e6df; border-radius:16px; background:#f4faf7; }
+#avatarPanel[hidden] { display:none; }
+#agent-avatar { grid-row:1 / 3; width:90px; height:160px; margin:auto; overflow:hidden; border-radius:12px; background:#e4eeea; }
+.avatar-tools { display:flex; gap:6px; flex-wrap:wrap; justify-content:center; align-content:center; }
+.avatar-tools button { border:1px solid #abcfc0; border-radius:8px; padding:6px 9px; background:white; color:#26624f; cursor:pointer; }
+.avatar-tools button:disabled { opacity:.45; cursor:default; }
+#avatarStatus { font-size:12px; text-align:center; color:#4b695e; margin-top:8px; }
+@media(max-height:700px) { #avatarPanel { grid-template-columns:63px 1fr; } #agent-avatar { width:63px; height:112px; } }
+/* Connected avatar fills the simulated phone, with controls above its canvas. */
+#avatarChatForm,#avatarSubtitle { display:none; }
+#avatarPanel.avatar-full { position:absolute; inset:0; z-index:45; display:block; margin:0; padding:0; border:0; border-radius:0; background:#152e2b; overflow:hidden; }
+#avatarPanel.avatar-full #agent-avatar { position:absolute; inset:0; z-index:0; isolation:isolate; width:100%; height:100%; margin:0; border-radius:0; background:#152e2b;  }
+/* Keep the complete source frame centered, overriding SDK pixel offsets. */
+#avatarPanel.avatar-full #agent-avatar canvas { position:absolute!important; inset:0!important; width:100%!important; height:100%!important; max-width:100%!important; max-height:100%!important; margin:0!important; transform:none!important; object-fit:contain!important; object-position:center!important; }
+#avatarPanel.avatar-full #avatarStatus,#avatarPanel.avatar-full .avatar-tools,#avatarPanel.avatar-full #avatarSubtitle,#avatarPanel.avatar-full #avatarChatForm { z-index:2; }
+#avatarPanel.avatar-full #avatarStatus { position:absolute; top:0; left:0; right:0; margin:0; padding:16px 14px 45px; color:white; background:linear-gradient(#102824d9,transparent); pointer-events:none; }
+#avatarPanel.avatar-full .avatar-tools { position:absolute; top:44px; left:12px; right:12px; justify-content:center; }
+#avatarPanel.avatar-full .avatar-tools button { background:#ffffffdd; }
+#avatarPanel.avatar-full #avatarConnect { display:none; }
+#avatarPanel.avatar-full #avatarSubtitle { display:block; position:absolute; bottom:82px; left:14px; right:14px; max-height:160px; overflow:auto; color:white; background:#102824c9; border-radius:12px; padding:10px 12px; font-size:14px; line-height:1.6; white-space:pre-wrap; }
+#avatarPanel.avatar-full #avatarSubtitle:empty { display:none; }
+#avatarPanel.avatar-full #avatarChatForm { display:flex; position:absolute; bottom:0; left:0; right:0; gap:8px; padding:14px 12px max(14px,env(safe-area-inset-bottom)); background:linear-gradient(transparent,#102824eb); }
+#avatarChatInput { min-width:0; flex:1; padding:12px; border:0; border-radius:24px; font:inherit; background:#ffffffed; }
+#avatarChatForm button { padding:10px 14px; border:0; border-radius:22px; background:var(--teal); color:white; }
+</style>
+<script>
+/* 全局兜底：任何同步脚本错误都在页面上显示可读原因，避免只剩白屏 */
+(function () {
+  var shown = false;
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function report(kind, msg) {
+    if (shown) return;
+    shown = true;
+    var html = '<h3 style="margin:0 0 12px;font-size:16px">页面加载出了问题</h3>'
+      + '<p style="margin:0 0 14px;color:#6b7f7c;word-break:break-all">' + esc(kind) + '：' + esc(msg) + '</p>'
+      + '<p style="margin:0 0 6px">可以这样试：</p>'
+      + '<ol style="margin:0 0 18px;padding-left:20px;color:#4a6360;line-height:1.8">'
+      + '<li>点下面的按钮清除本地数据后自动重载</li>'
+      + '<li>换系统浏览器打开（Safari / Chrome / Edge），不要用应用内浏览器</li>'
+      + '<li>仍不行就把这段文字截图发我</li></ol>'
+      + '<button onclick="try{localStorage.clear()}catch(e){};location.reload()" '
+      + 'style="padding:11px 18px;border:0;border-radius:10px;background:#0e9488;color:#fff;font-size:14px">清除本地数据并重载</button>';
+    function paint() {
+      try {
+        var d = document.createElement('div');
+        d.setAttribute('data-jianan-error', '1');
+        d.style.cssText = 'position:fixed;left:0;top:0;right:0;bottom:0;z-index:99999;background:#fbf7f2;'
+          + 'color:#243b38;padding:28px 22px;font:14px/1.6 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif;overflow:auto;';
+        d.innerHTML = html;
+        document.body.appendChild(d);
+      } catch (e) {}
+    }
+    if (document.body) paint();
+    else document.addEventListener('DOMContentLoaded', paint);
+  }
+  window.addEventListener('error', function (e) {
+    // 只报同步脚本错误；资源加载失败（图片等）不触发白屏提示
+    if (e && e.message) report('脚本错误', e.message + (e.lineno ? '（第 ' + e.lineno + ' 行）' : ''));
+  });
+  window.__jiananReportError = report;
+})();
+</script>
+</head>
+<body>
+<div class="phone"><div class="screen">
+  <div class="statusbar"><span>9:41</span><span class="dots"><i></i><i></i><i></i></span></div>
+  <div class="app">
+
+    <section class="page active" id="p-welcome">
+      <svg class="logo" viewBox="0 0 120 120">
+        <circle cx="60" cy="60" r="56" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="2"/>
+        <path d="M14 86 Q40 70 60 80 T106 74" fill="none" stroke="#e8faf7" stroke-width="3" stroke-linecap="round"/>
+        <path d="M62 60 l10 -16 6 16 z" fill="#fff" opacity=".9"/>
+        <circle cx="86" cy="44" r="7" fill="#fff" opacity=".85"/>
+      </svg>
+      <h1>见岸</h1>
+      <p>你不必独自扛着</p>
+      <div class="enter" onclick="enterApp()">进入 ›</div>
+    </section>
+
+    <section class="page" id="p-index">
+      <div class="hero"><div class="brand">🏝️ 见岸</div><div class="slogan">你不必独自扛着</div></div>
+      <div class="now-card">
+        <div class="now-q" id="nowQ">此刻，你还好吗？</div>
+        <div class="now-opts">
+          <div class="now-opt" id="no-不错" data-m="不错" onclick="checkNow('不错')"><span class="now-e">🙂</span><span class="now-t">还行</span></div>
+          <div class="now-opt" id="no-一般" data-m="一般" onclick="checkNow('一般')"><span class="now-e">😐</span><span class="now-t">一般</span></div>
+          <div class="now-opt" id="no-低落" data-m="低落" onclick="checkNow('低落')"><span class="now-e">😔</span><span class="now-t">不太好</span></div>
+        </div>
+        <div class="now-suggest" id="nowSuggest" style="display:none;">
+          <div class="suggest-text" id="suggestText"></div>
+          <div class="suggest-btn" id="suggestBtn"></div>
+        </div>
+        <div class="now-foot" id="nowFoot" style="display:none;"></div>
+      </div>
+
+      <div class="section-t">陪你聊聊</div>
+      <div class="grid3" id="personaGrid"></div>
+
+      <div class="section-t">让身体慢下来</div>
+      <div class="grid3">
+        <div class="box3" onclick="openExercise('breathe')"><span class="e">🌬️</span><div class="t">呼吸训练</div><div class="d">两分钟平复</div></div>
+        <div class="box3" onclick="openExercise('ground')"><span class="e">🪨</span><div class="t">着陆练习</div><div class="d">回到此刻</div></div>
+        <div class="box3" onclick="openExercise('meditation')"><span class="e">🧘</span><div class="t">冥想引导</div><div class="d">身体扫描·入睡</div></div>
+      </div>
+
+      <div class="section-t">把日子过稳</div>
+      <div class="grid3">
+        <div class="box3" onclick="openExercise('pomodoro')"><span class="e">🍅</span><div class="t">番茄钟</div><div class="d">专注一小段</div></div>
+        <div class="box3" onclick="openMood()"><span class="e">🌤️</span><div class="t">情绪打卡</div><div class="d">写下此刻</div></div>
+        <div class="box3" onclick="setTab('community')"><span class="e">🌊</span><div class="t">手记</div><div class="d">写给自己</div></div>
+      </div>
+
+      <div class="section-t">值得一读</div>
+      <div class="read-list" id="readList"></div>
+
+      <div class="sos" onclick="openSos()"><span>🆘</span><span class="t">我现在很不好，需要人帮忙</span></div>
+      <div class="tabbar-spacer"></div>
+    </section>
+
+    <section class="page" id="p-chat">
+      <div class="chat-head">
+        <div class="ava" id="chatAva">岸</div>
+        <div style="flex:1;"><div class="nm" id="chatNm">见岸</div><div class="tag" id="chatTag">温柔陪伴 · 轻科普</div></div>
+        <div class="gear" onclick="openSettings()" title="AI 设置">⚙️</div>
+      </div>
+      <div class="ai-status" id="aiStatus" onclick="checkAI()"></div>
+      <div class="ai-notice">回复由人工智能生成，仅供陪伴与参考，不构成医疗诊断或心理治疗建议。</div>
+      <div class="persona-bar" id="personaBar"></div>
+      <div id="avatarPanel" hidden>
+        <div id="agent-avatar" aria-label="数字人"></div>
+        <div id="avatarStatus" role="status">数字人未连接</div>
+        <div class="avatar-tools">
+          <button id="avatarConnect">连接数字人</button><button id="avatarTest" disabled>试听</button>
+          <button id="avatarStop" disabled>停止播报</button><button id="avatarDisconnect" disabled>返回聊天</button>
+        </div>
+        <div id="avatarSubtitle" aria-live="polite"></div>
+        <form id="avatarChatForm"><input id="avatarChatInput" placeholder="想说什么，慢慢告诉我…" aria-label="给数字人发消息" autocomplete="off"><button type="submit">发送</button></form>
+      </div>
+      <div class="trend-chip" id="trendChip" onclick="tellTrend()" style="display:none;"></div>
+      <div id="msgList" class="chat-scroll"></div>
+      <div class="quick-bar" id="quickBar"></div>
+      <div class="chat-actions">
+        <div class="act" onclick="startNewChat()">＋ 开启新对话</div>
+        <div class="act" onclick="openExercise('breathe')">🍃 去缓一缓</div>
+      </div>
+      <div class="demo-btn" onclick="simulateCrisis()" style="display:none;">· 演示：模拟一条危机对话 ·</div>
+      <div class="demo-btn" onclick="simulateFailure()" style="display:none;">· 演示：模拟发送失败 ·</div>
+      <div class="tabbar-spacer"></div>
+    </section>
+
+    <section class="page" id="p-community">
+      <div class="section-t" style="margin-top:0;">🌊 我的手记 <span id="wallCount" style="font-weight:400;"></span></div>
+      <div class="filters" id="filters"></div>
+      <div class="wall" id="wall"></div>
+      <div class="hint-box">这面墙只属于你：写下的话保存在本机，不上传，也不会有别人看到。标着「见岸的话」的几句是我们留的陪伴语，不是其他用户的留言。</div>
+      <div class="add-btn" onclick="addWall()">＋ 写一句给此刻的自己</div>
+
+      <div class="section-t">值得一读</div>
+      <div id="articleList"></div>
+      <div class="tabbar-spacer"></div>
+    </section>
+
+    <section class="page" id="p-about">
+      <div class="brand-box">
+        <svg class="lg" viewBox="0 0 84 84"><circle cx="42" cy="42" r="38" fill="none" stroke="#0e9488" stroke-width="2.5"/><path d="M12 60 Q32 48 42 54 T72 50" stroke="#0e9488" stroke-width="2.5" fill="none"/><path d="M44 44 l8 -14 5 14z" fill="#0e9488"/><circle cx="60" cy="30" r="5" fill="#0e9488" opacity=".8"/></svg>
+        <div class="nm">见岸</div><div class="sl">你的心灵避风港</div>
+      </div>
+      <div class="card" style="padding:6px 14px;">
+        <div class="lk" onclick="toast('隐私政策：记录只存本机，见岸不留存副本')">🔒 隐私政策 <span class="ar">›</span></div>
+        <div class="lk" onclick="toast('用户协议：AI 不构成医疗建议')">📄 用户协议 <span class="ar">›</span></div>
+        <div class="lk" onclick="openSos()">📞 心理援助热线 <span class="ar">›</span></div>
+      </div>
+      <div class="card">
+        <div style="font-size:14px;font-weight:700;color:var(--teal-dark);">🗂️ 我的数据</div>
+        <div class="muted" style="margin:8px 0 12px;line-height:1.6;">心情打卡、对话历史、番茄与冥想统计、手记都保存在这台设备上。可导出备份、导入恢复，或一次性清除。</div>
+        <div class="data-actions">
+          <div class="dbtn ghost" onclick="exportData()">导出备份</div>
+          <div class="dbtn ghost" onclick="importData()">导入恢复</div>
+        </div>
+        <div class="dbtn danger wide" onclick="clearData()">清除我的数据</div>
+      </div>
+      <div class="muted" style="text-align:center;margin-top:14px;line-height:1.6;">
+        见岸由人工智能驱动，不能替代医生或心理治疗。<br/>如遇危机请拨打 <b style="color:var(--danger)">12356</b>。
+      </div>
+      <div class="icp-footer" onclick="openExt('https://beian.miit.gov.cn')">
+        津ICP备2026012185号-1X
+      </div>
+      <div class="tabbar-spacer"></div>
+    </section>
+
+    <!-- 对话输入栏：放在滚动区外，固定在底部导航上方（放进 .page 里会随内容滚走） -->
+    <div class="voice-bar" id="voiceBar" style="display:none;">
+      <div class="voice-wave"><span class="vw"></span><span class="vw"></span><span class="vw"></span><span class="vw"></span><span class="vw"></span></div>
+      <span class="voice-tip" id="voiceTip">正在聆听…</span>
+      <span class="voice-cancel" onclick="cancelVoice()">取消</span>
+    </div>
+    <div class="input-bar" id="chatBar" style="display:none;">
+      <div class="voice-btn" id="voiceBtn" onclick="toggleVoice()">🎤</div>
+      <input id="chatInput" placeholder="说点什么吧，也可以点麦克风说话" onkeydown="if(event.key==='Enter')sendMsg()"/>
+      <button class="send" onclick="sendMsg()">发送</button>
+    </div>
+
+    <div class="sheet" id="sheet"></div>
+    <div class="exercise" id="exercise"><div id="exerciseBody"></div></div>
+    <div class="toast" id="toast"></div>
+    <div class="modal" id="modal"><div class="modal-box">
+      <div class="modal-t" id="modalT"></div><div class="modal-c" id="modalC"></div>
+      <div class="modal-btns" id="modalBtns"></div>
+    </div></div>
+
+    <!-- 设置面板：Key 存本机 localStorage，仅请求时带给后端 -->
+    <div class="settings" id="settings">
+      <span class="back" onclick="closeSettings()">‹ 返回</span>
+      <h2>⚙️ AI 设置</h2>
+      <div class="sub">这些 Key 只存在你本机（localStorage），请求时带给后端，不上传服务器。AI Ping Key 失效时粘贴你自己的即可恢复对话；百度语音 Key 用于把麦克风说的话转成文字。</div>
+      <div class="set-row">
+        <label>AI Ping API Key（可选，留空用内置）</label>
+        <input id="setAiping" placeholder="QC-xxxx" />
+        <div class="set-hint">内置 DeepSeek 已默认接入，任何设备打开直接可用。想用自己的 Key 覆盖服务端默认，可填这里（留空则用内置）。</div>
+      </div>
+      <div class="set-row">
+        <label>AI 接口地址（可选，留空用内置 DeepSeek）</label>
+        <input id="setApiBase" placeholder="https://your-proxy.example.com/v1" />
+        <div class="set-hint">内置已是 DeepSeek，一般不用填。如需换其他 OpenAI 兼容接口，填它的「base URL」（以 /v1 结尾，不用写 /chat/completions），例如 https://api.openai.com/v1。</div>
+      </div>
+      <div class="set-row">
+        <label>模型名（填了接口地址时必填）</label>
+        <input id="setModel" placeholder="deepseek-chat" />
+        <div class="set-hint">填了上面的接口地址后，这里必须填该平台对应的模型名。如 DeepSeek 填 <b>deepseek-chat</b>；留空接口地址则用内置 DeepSeek，无需填。</div>
+      </div>
+      <div class="set-row">
+        <label>百度语音 AppKey（麦克风转文字用）</label>
+        <input id="setBaiduAK" placeholder="百度智能云 AppKey" />
+      </div>
+      <div class="set-row">
+        <label>百度语音 SecretKey</label>
+        <input id="setBaiduSK" placeholder="百度智能云 SecretKey" />
+        <div class="set-hint">没 Key 也能用文字聊天；要用麦克风说话，需到 <span class="set-link" onclick="openExt('https://console.bce.baidu.com/ai/')">百度智能云-语音技术</span> 创建应用拿 AppKey/SecretKey（有免费额度）。</div>
+      </div>
+      <div class="set-btns">
+        <div class="mbtn ok" onclick="saveSettings()">保存</div>
+        <div class="mbtn cancel" onclick="closeSettings()">取消</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tabbar">
+    <div class="tab on" data-tab="index" onclick="setTab('index')"><div class="ti">🏠</div>首页</div>
+    <div class="tab" data-tab="chat" onclick="setTab('chat')"><div class="ti">💬</div>对话</div>
+    <div class="tab" data-tab="community" onclick="setTab('community')"><div class="ti">🌊</div>手记</div>
+    <div class="tab" data-tab="about" onclick="setTab('about')"><div class="ti">ℹ️</div>关于</div>
+  </div>
+</div></div>
+<script src="/avatar.js?v=20261020c" onerror="console.warn('[见岸] 数字人资源加载失败')"></script>
+<script>
+  // 数字人资源加载失败时仍允许文字对话。
+  if(!window.jiananAvatar){
+    window.jiananAvatar={begin(){},speak(){},interrupt(){},sync(){document.getElementById('avatarStatus').textContent='数字人资源加载失败，请刷新重试；文字对话可继续';}};
+    document.querySelectorAll('#avatarPanel button').forEach(b=>b.disabled=true);
+  }
+  // ===== 状态（存 localStorage，刷新不丢，像真 App）=====
+  const KEY='jianan_demo_v2';
+  const DEF={
+    moods:[], persona:'jianan', chats:{}, crisis:false,
+    wall:[{id:'s1',mood:'温暖',text:'你今天愿意打开这个小程序，就已经在照顾自己了。',seed:true},
+          {id:'s2',mood:'坚定',text:'上岸不是一瞬间的事，是一点一点走出来的。慢慢来。',seed:true},
+          {id:'s3',mood:'低落',text:'有些日子只是撑着就已经很累了，撑住的你很勇敢。',seed:true},
+          {id:'s4',mood:'迷茫',text:'不知道什么时候会好，也没关系，先过好今天这一小会儿。',seed:true},
+          {id:'s5',mood:'焦虑',text:'手抖、心慌的时候，我在。我们一起慢慢呼吸。',seed:true}],
+    pomo:{done:0}, med:0
+  };
+  let S;
+  try{ S=Object.assign(JSON.parse(JSON.stringify(DEF)),JSON.parse(localStorage.getItem(KEY)||'{}')); }catch(e){ S=JSON.parse(JSON.stringify(DEF)); }
+  // 结构校验：旧版本残留或损坏的本地数据会让渲染函数抛错，从而整页白屏。
+  // 这里把缺失/类型不对的字段补回默认值，宁可丢历史也不白屏。
+  try{
+    if(!S || typeof S!=='object' || Array.isArray(S)) S=JSON.parse(JSON.stringify(DEF));
+    if(!S.chats || typeof S.chats!=='object' || Array.isArray(S.chats)) S.chats={};
+    if(!Array.isArray(S.moods)) S.moods=[];
+    if(!Array.isArray(S.wall)) S.wall=DEF.wall.slice();
+    if(!S.pomo || typeof S.pomo!=='object' || Array.isArray(S.pomo)) S.pomo={done:0};
+    if(!['jianan','anxin','xiaoxian'].includes(S.persona)) S.persona='jianan';
+    for(const id of ['jianan','anxin','xiaoxian']){
+      if(!Array.isArray(S.chats[id])) delete S.chats[id];
+      else S.chats[id]=S.chats[id].filter(m=>m && ['user','assistant'].includes(m.role) && typeof m.content==='string').map(m=>{
+        if(m.streaming){ m.content=m.placeholder?'上次回复被中断，请重新发送。':(m.content||'上次回复被中断，请重新发送。'); delete m.streaming; delete m.placeholder; }
+        return m;
+      });
+    }
+    if(typeof S.crisis!=='boolean') S.crisis=false;
+  }catch(e){ S=JSON.parse(JSON.stringify(DEF)); }
+  function save(){ try{ localStorage.setItem(KEY,JSON.stringify(S)); }catch(e){} }
+
+  // ===== 设置（Key 存本机，仅请求时带给后端）=====
+  const SET_KEY='jianan_settings_v1';
+  let SET={aipingKey:'',apiBase:'',model:'',baiduAK:'',baiduSK:''};
+  try{ SET=Object.assign({aipingKey:'',apiBase:'',model:'',baiduAK:'',baiduSK:''}, JSON.parse(localStorage.getItem(SET_KEY)||'{}')); }catch(e){}
+  for(const key of Object.keys(SET)) if(typeof SET[key]!=='string') SET[key]='';
+  function saveSettingsStore(){ try{ localStorage.setItem(SET_KEY, JSON.stringify(SET)); }catch(e){} }
+  // 打开外部链接：桌面走主进程 shell.openExternal；公网走 window.open
+  function openExt(url){ if(window.jiananAPI && window.jiananAPI.openExternal){ window.jiananAPI.openExternal(url); } else { window.open(url,'_blank'); } }
+  function openSettings(){ document.getElementById('setAiping').value=SET.aipingKey||''; document.getElementById('setApiBase').value=SET.apiBase||''; document.getElementById('setModel').value=SET.model||''; document.getElementById('setBaiduAK').value=SET.baiduAK||''; document.getElementById('setBaiduSK').value=SET.baiduSK||''; document.getElementById('settings').classList.add('open'); }
+  function closeSettings(){ document.getElementById('settings').classList.remove('open'); }
+  function saveSettings(){ SET.aipingKey=document.getElementById('setAiping').value.trim(); SET.apiBase=document.getElementById('setApiBase').value.trim().replace(/\/$/,''); SET.model=document.getElementById('setModel').value.trim(); SET.baiduAK=document.getElementById('setBaiduAK').value.trim(); SET.baiduSK=document.getElementById('setBaiduSK').value.trim(); saveSettingsStore(); closeSettings(); toast('已保存'); checkAI(); }
+
+  const PERSONAS=[
+    {id:'jianan',n:'见岸',a:'🏝️',t:'温柔陪伴 · 理清困扰',ava:'岸'},
+    {id:'anxin',n:'安心',a:'🩺',t:'讲明白机制 · 循证科普',ava:'安'},
+    {id:'xiaoxian',n:'小暖',a:'🌿',t:'不评判地听着',ava:'暖'}
+  ];
+  const MOOD_SCORE={'很好':5,'不错':4,'一般':3,'低落':2,'糟糕':1};
+  const ARTICLES=[
+    {id:'ocd',em:'🧠',t:'强迫症到底是什么',d:'不是"爱干净"，是一种停不下来的紧'},
+    {id:'check',em:'🔁',t:'为什么总忍不住反复检查',d:'那个"万一"是怎么来的'},
+    {id:'intrusive',em:'💭',t:'侵入性思维：脑子里的不速之客',d:'有念头 ≠ 你坏'},
+    {id:'erp',em:'🪜',t:'ERP：和恐惧共处的方法',d:'暴露与反应阻止入门'},
+    {id:'sleep',em:'🌙',t:'睡眠与情绪：夜里最难熬',d:'睡不着时怎么办'},
+    {id:'help',em:'🤝',t:'求助不是软弱',d:'什么时候该找专业帮助'},
+    {id:'support',em:'👪',t:'身边人的支持',d:'如何陪一个被困扰的人'}
+  ];
+  const SUGGEST={
+    '不错':{text:'状态还行，就记一笔吧。攒起来，过阵子回看会看见变化。',btn:'去记一笔',act:'openMood'},
+    '一般':{text:'不算好也不算坏。要不先喘口气？跟着做两组呼吸，两分钟就够。',btn:'开始呼吸',act:()=>openExercise('breathe')},
+    '低落':{text:'有点沉的时候，说出来会轻一点。跟见岸聊聊，不用组织语言。',btn:'去聊聊',act:'goChat'}
+  };
+  const REPLY={
+    low:['听你这么说，我心里也沉沉的。你愿意多讲讲那种感觉是从什么时候开始的吗？','我在这儿陪着你。不用急着好起来，先把这些说出来就好。'],
+    anx:['焦虑像浪，来的时候很猛，但它是会退的。我们先一起喘口气，好吗？','那种控制不住的感觉一定很累。我听着呢，慢慢说。'],
+    def:['嗯，我在听。你可以慢慢说，不用组织语言。','谢谢你愿意告诉我这些。如果聊到让你难受的地方，随时可以停下来。']
+  };
+  // 危机关键词（与云端 chat 云函数对齐，覆盖更多自伤/自杀表达）
+  const CRISIS_WORDS=['自杀','自伤','不想活','不想活了','活不下去','活不下去了','结束生命','想死','去死','没有意义了','活着没意思','活着没意义','活得没意思','活著沒意義','伤害自己','了结','解脱','轻生','不如死了','不如死了算了','结束一切','一了百了','自我了断','寻死','自尽','放弃生命','没人需要我','没人在乎我','想消失','想消失在这个世界','彻底解脱','从楼上跳','跳楼','割腕','吞药','撞车','撑不住了','kill myself','kms','suicide','end my life','want to die','i want to die','hurt myself'];
+  function isCrisisText(t){ t=String(t||'').toLowerCase(); return CRISIS_WORDS.some(k=>t.includes(k.toLowerCase())); }
+  let typing=false;
+  // 各省官方心理援助热线（数据截至2025-2026，来源国家卫健委及各地精神卫生中心；号码以当地最新公布为准）
+  // 注：12356 全国统一（24h）已覆盖绝大多数省份，为最稳妥首选；以下为各省本地官方补充号。
+  // 全国性热线（无分机、可直拨；来源：国家卫健委及公开权威渠道核实）
+  const NATION_HOTLINES=[
+    {name:'全国心理援助热线',tel:'12356',note:'24小时 · 国家卫健委统一设立'},
+    {name:'希望24热线',tel:'400-161-9995',note:'24小时 · 学生按1 / 抑郁与自伤防治按2 / 生命热线按3'},
+    {name:'青少年服务台',tel:'12355',note:'各地服务时间不同，多为工作日'},
+    {name:'妇女维权公益热线',tel:'12338',note:'以工作日为主'}
+  ];
+  const PROV_HOTLINES=[
+    {p:'北京',local:{tel:'010-82951332',h24:true,org:'北京心理危机研究与干预中心'}},
+    {p:'天津',local:{tel:'022-88188858',h24:true,org:'天津市安定医院'}},
+    {p:'河北',local:{tel:'0312-96312',h24:true,org:'河北省精神卫生中心'}},
+    {p:'山西',local:{tel:'0351-8726199',h24:true,org:'山西省精神卫生中心'}},
+    {p:'内蒙古',local:{tel:'0471-12320',h24:true,org:'内蒙古自治区精神卫生中心'}},
+    {p:'辽宁',local:{tel:'024-96687',h24:true,org:'辽宁省精神卫生中心'}},
+    {p:'吉林',local:{tel:'0431-89685000',h24:true,org:'长春市第六医院'}},
+    {p:'黑龙江',local:{tel:'0451-12320',h24:true,org:'黑龙江省危机干预热线'}},
+    {p:'上海',local:{tel:'021-962525',h24:true,org:'上海市精神卫生中心'}},
+    {p:'江苏',local:{tel:'025-83712977',h24:true,org:'南京脑科医院（江苏省精神卫生中心）'}},
+    {p:'浙江',local:{tel:'0571-85029595',h24:true,org:'杭州市第七人民医院'}},
+    {p:'安徽',local:{tel:'0551-63666903',h24:true,org:'合肥市第四人民医院'}},
+    {p:'福建',local:{tel:'0591-85666661',h24:true,org:'福州神经精神病防治院'}},
+    {p:'江西',local:{tel:'0791-966525',h24:true,org:'江西省社会心理服务热线'}},
+    {p:'山东',local:{tel:'0531-86336666',h24:false,time:'17:30-21:00（工作日）',org:'山东省精神卫生中心'}},
+    {p:'河南',local:{tel:'0373-7095888',h24:true,org:'河南省精神卫生中心'}},
+    {p:'湖北',local:{tel:'027-85844666',h24:true,org:'武汉市精神卫生中心'}},
+    {p:'湖南',local:{tel:'0731-85501010',h24:true,org:'长沙市第九医院'}},
+    {p:'广东',local:{tel:'020-81899120',h24:true,org:'广州医科大学附属脑科医院'}},
+    {p:'广西',local:{tel:'0772-3136120',h24:true,org:'广西壮族自治区脑科医院'}},
+    {p:'海南',local:{tel:'0898-96363',h24:true,org:'海南省安宁医院'}},
+    {p:'重庆',local:{tel:'023-96320',h24:true,org:'重庆市精神卫生中心'}},
+    {p:'四川',local:{tel:'028-87577510',h24:true,org:'成都市第四人民医院'}},
+    {p:'贵州',local:{tel:'0851-88417888',h24:false,time:'周一至周五 8:00-17:00',org:'贵州省第二人民医院'}},
+    {p:'云南',local:{tel:'0871-12320',h24:true,org:'昆明心理危机研究与干预中心'}},
+    {p:'西藏',local:{tel:'0891-12320',h24:false,time:'以当地最新公布为准',org:'西藏自治区卫健委'}},
+    {p:'陕西',local:{tel:'400-896-0960',h24:false,time:'8:00-22:00',org:'西安市精神卫生中心'}},
+    {p:'甘肃',local:{tel:'0931-12320',h24:false,time:'8:00-22:00',org:'兰州市精神卫生中心'}},
+    {p:'青海',local:{tel:'0971-8140371',h24:true,org:'青海省第三人民医院'}},
+    {p:'宁夏',local:{tel:'0951-2160707',h24:true,org:'宁夏心理援助热线'}},
+    {p:'新疆',local:{tel:'0991-3016111',h24:true,org:'新疆心理援助热线'}}
+  ];
+
+  // ===== 导航 =====
+  function setTab(t){
+    window.jiananAvatar.sync(S.persona, t==='chat');
+    document.getElementById('p-welcome').classList.remove('active');
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.getElementById('p-'+t).classList.add('active');
+    document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));
+    const bar=document.getElementById('chatBar');
+    if(bar) bar.style.display = t==='chat' ? 'flex' : 'none';
+    if(t==='index')renderHome();
+    if(t==='chat')renderChat();
+    if(t==='community')renderCommunity();
+  }
+  function enterApp(){ setTab('index'); setTimeout(checkAI, 500); }
+
+  // ===== 弹窗 / toast =====
+  // 是否在对话页：决定警示是「贴最新消息」还是「居中 / 浮动」
+  function inChatPage(){ const p=document.getElementById('p-chat'); return !!p && p.classList.contains('active'); }
+  function dialog(title,content,btns){
+    document.getElementById('modalT').textContent=title;
+    document.getElementById('modalC').textContent=content;
+    const box=document.getElementById('modalBtns'); box.innerHTML='';
+    btns.forEach(b=>{
+      const d=document.createElement('div');
+      d.className='mbtn '+(b.type||'ok'); d.textContent=b.label;
+      d.onclick=()=>{ document.getElementById('modal').classList.remove('show'); if(b.fn)b.fn(); };
+      box.appendChild(d);
+    });
+    const m=document.getElementById('modal');
+    const atLatest=inChatPage();
+    m.classList.toggle('at-latest', atLatest);   // 对话页贴消息区底部，其它页仍居中
+    // 精确对齐：弹窗底边 = 消息区底边（紧贴最后一条消息，而不是固定顶部/中间）
+    if(atLatest){
+      const app=document.querySelector('.app'), ml=document.getElementById('msgList');
+      if(app&&ml){
+        const gap=app.getBoundingClientRect().bottom-ml.getBoundingClientRect().bottom;
+        m.style.paddingBottom=Math.max(0,Math.round(gap))+'px';
+      }
+    } else m.style.paddingBottom='';
+    m.classList.add('show');
+  }
+  let tt;
+  const WARN_KEYS=/失败|连不上|不可用|错误|异常|无法|不支持|没录到|没听清|权限|不可恢复|需要/;
+  let toastSeq=0, chatAlerts=[];   // 对话页的提示：追加在最新消息之后，按时间顺序依次排列
+  function toast(m){
+    m=String(m==null?'':m);
+    if(inChatPage()){
+      const id=++toastSeq;
+      chatAlerts.push({id,text:m,warn:WARN_KEYS.test(m)});
+      if(chatAlerts.length>5) chatAlerts.splice(0,chatAlerts.length-5);
+      renderMsgs();
+      setTimeout(()=>{ chatAlerts=chatAlerts.filter(x=>x.id!==id); if(inChatPage()) renderMsgs(); },3200);
+      return;
+    }
+    const t=document.getElementById('toast'); t.textContent=m; t.classList.add('show');
+    clearTimeout(tt); tt=setTimeout(()=>t.classList.remove('show'),1700);
+  }
+  function todayKey(){const d=new Date();return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;}
+  function moodToday(){return S.moods.find(m=>m.date===todayKey())||null;}
+
+  // ===== 首页 =====
+  function renderHome(){
+    const m=moodToday();
+    document.getElementById('nowQ').textContent = m?`今天你感觉「${m.mood}」`:'此刻，你还好吗？';
+    ['不错','一般','低落'].forEach(k=>{
+      document.getElementById('no-'+k).classList.toggle('on',!!m&&m.mood===k);
+    });
+    const sg=document.getElementById('nowSuggest'), ft=document.getElementById('nowFoot');
+    if(m&&SUGGEST[m.mood]){
+      sg.style.display='flex';
+      document.getElementById('suggestText').textContent=SUGGEST[m.mood].text;
+      const b=document.getElementById('suggestBtn');
+      b.textContent=SUGGEST[m.mood].btn;
+      b.onclick=()=>{ const a=SUGGEST[m.mood].act; if(typeof a==='function')a(); else window[a](); };
+    } else sg.style.display='none';
+    if(m){ ft.style.display='block'; ft.innerHTML='已记下今天这一笔 · <b onclick="openMood()">详细记录</b>'; }
+    else ft.style.display='none';
+
+    document.getElementById('personaGrid').innerHTML=PERSONAS.map(p=>`
+      <div class="box3" onclick="pickPersona('${p.id}')">
+        <span class="e">${p.a}</span><div class="t">${p.n}</div><div class="d">${p.t}</div></div>`).join('');
+    document.getElementById('readList').innerHTML=ARTICLES.slice(0,3).map(a=>`
+      <div class="read-item" onclick="openArticle('${a.id}')">
+        <span class="read-title">${a.t}</span><span class="read-arrow">›</span></div>`).join('');
+  }
+
+  // 主线：点一下 = 打卡 + 给一件事做
+  function checkNow(mood){
+    const tk=todayKey();
+    const i=S.moods.findIndex(x=>x.date===tk);
+    const rec={date:tk,mood,note:i>=0?(S.moods[i].note||''):''};
+    if(i>=0)S.moods[i]=rec; else S.moods.push(rec);
+    save(); renderHome(); toast('已记下');
+  }
+  function openMood(){
+    const cur=moodToday();
+    dialog('情绪打卡','选一个最接近此刻的心情，可以的话写一句备注。',
+      [['很好','😊'],['不错','🙂'],['一般','😐'],['低落','😔'],['糟糕','😣']].map(([k,e])=>({
+        label:e+' '+k, type:cur&&cur.mood===k?'ok':'cancel',
+        fn:()=>{ checkNow(k); toast('已记录：'+k); }
+      })));
+  }
+  // 拨打热线：去掉横杠等分隔符，部分安卓机型原生拨号盘不认带横杠的号
+  // 拨打热线：去掉横杠等分隔符，部分安卓机型原生拨号盘不认带横杠的号。
+  // 桌面浏览器没有拨号能力，点击后原本毫无反应，且用户也没有「长按复制」这个触屏动作，
+  // 所以在无拨号能力的环境改为「复制号码 + 明确提示」，保证一定拿得到号。
+  function dialTel(tel){
+    const clean=String(tel||'').replace(/[^\d+]/g,'');
+    if(!clean)return;
+    const isDesktop = !/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+    if(isDesktop){
+      copyTel(tel);
+      toast('已复制 '+tel+'，可用手机拨打');
+      return;
+    }
+    try{ window.location.href='tel:'+clean; }catch(e){}
+    toast('正在呼叫 '+tel+' …');
+  }
+  // 复制号码：热线在「拨不出去」或「网络受限」时的兜底手段
+  function copyTel(tel){
+    const s=String(tel||'');
+    if(!s)return;
+    try{
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(s).catch(function(){
+          const ta=document.createElement('textarea');
+          ta.value=s; ta.style.position='fixed'; ta.style.opacity='0';
+          document.body.appendChild(ta); ta.select();
+          try{ document.execCommand('copy'); }catch(e){}
+          document.body.removeChild(ta);
+        });
+        return;
+      }
+    }catch(e){}
+    const ta=document.createElement('textarea');
+    ta.value=s; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); }catch(e){}
+    document.body.removeChild(ta);
+  }
+  function openSos(){
+    const m=document.getElementById('modal');
+    document.getElementById('modalT').textContent='心理援助热线';
+    document.getElementById('modalC').innerHTML=
+      '<div style="font-size:12.5px;color:#7a3a35;margin-bottom:10px;">优先拨打全国热线（24小时，免费）。也可选择你所在省份，查看当地官方热线与可接通时间。</div>'+
+      NATION_HOTLINES.map(function(h){ return '<div onclick="dialTel(\''+h.tel+'\')" style="background:#fff4f3;border:1px solid #f3c4c0;border-radius:10px;padding:9px;margin-bottom:8px;cursor:pointer;"><b>'+h.tel+'</b> '+h.name+' · <b>'+h.note+'</b></div>'; }).join('')+
+      '<div id="provGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px;"></div>';
+    const grid=document.getElementById('provGrid');
+    grid.innerHTML=PROV_HOTLINES.map(p=>`<div onclick="openProvince('${p.p}')" style="padding:9px 4px;text-align:center;background:#f4faf9;border:1px solid #cfe9e4;border-radius:9px;font-size:12.5px;cursor:pointer;">${p.p}</div>`).join('');
+    const box=document.getElementById('modalBtns'); box.innerHTML='';
+    const d=document.createElement('div'); d.className='mbtn cancel'; d.textContent='关闭'; d.onclick=()=>m.classList.remove('show'); box.appendChild(d);
+    m.classList.add('show');
+  }
+  function openProvince(p){
+    const item=PROV_HOTLINES.find(x=>x.p===p); if(!item)return;
+    const m=document.getElementById('modal');
+    document.getElementById('modalT').textContent=p+' · 心理援助热线';
+    let html='<div style="font-size:12.5px;line-height:1.7;">';
+    html+='<div style="background:#fff4f3;border:1px solid #f3c4c0;border-radius:10px;padding:9px;margin-bottom:9px;"><b>12356</b> 全国统一 · <b>24小时</b> · 免费<br/><span style="font-size:11.5px;color:#7a3a35;">拨打即接入，加区号可转接指定地区</span></div>';
+    if(item.local){ html+=`<div style="background:#f4faf9;border:1px solid #cfe9e4;border-radius:10px;padding:9px;margin-bottom:8px;"><b>${item.local.tel}</b> ${item.local.h24?'· <b>24小时</b>':('· '+item.local.time)}<br/><span style="font-size:11.5px;color:#555;">${item.local.org}</span></div>`; }
+    html+='<div style="font-size:11px;color:#999;margin-top:6px;">数据截至2025-2026，来源国家卫健委及各地精神卫生中心；号码以当地最新公布为准。</div>';
+    html+='</div>';
+    document.getElementById('modalC').innerHTML=html;
+    const box=document.getElementById('modalBtns'); box.innerHTML='';
+    const c=document.createElement('div'); c.className='mbtn ok'; c.textContent='拨打 12356'; c.onclick=()=>{ m.classList.remove('show'); dialTel('12356'); }; box.appendChild(c);
+    if(item.local){ const l=document.createElement('div'); l.className='mbtn cancel'; l.textContent='拨打 '+item.local.tel; l.onclick=()=>{ m.classList.remove('show'); dialTel(item.local.tel); }; box.appendChild(l); }
+    const bk=document.createElement('div'); bk.className='mbtn cancel'; bk.textContent='返回省份'; bk.onclick=()=>openSos(); box.appendChild(bk);
+    m.classList.add('show');
+  }
+
+  // ===== 对话 =====
+  function curP(){ return PERSONAS.find(p=>p.id===S.persona)||PERSONAS[0]; }
+  function msgs(){ if(!S.chats[S.persona])S.chats[S.persona]=[{role:'assistant',content:greet(),ts:Date.now()}]; return S.chats[S.persona]; }
+  function greet(){
+    const t=trend();
+    if(!t)return '我在这里。无论你想说什么，都可以慢慢讲，我会认真听。';
+    if(t.level==='low')return `我注意到你最近几次打卡都不太轻松。没关系，这里可以慢慢说，我不急。`;
+    if(t.level==='ok')return '看你最近状态还挺稳，挺好的。今天想聊点什么？';
+    return '看你最近的打卡起起伏伏的，辛苦了。今天想先说说哪一块？';
+  }
+  function trend(){
+    if(S.moods.length<2)return null;
+    const r=S.moods.slice(-7), sc=r.map(m=>MOOD_SCORE[m.mood]||3);
+    const avg=sc.reduce((a,b)=>a+b,0)/sc.length;
+    const cnt={}; r.forEach(m=>cnt[m.mood]=(cnt[m.mood]||0)+1);
+    const dominant=Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a])[0];
+    const h=Math.floor(sc.length/2);
+    const d=sc.slice(h).reduce((a,b)=>a+b,0)/(sc.length-h)-sc.slice(0,h).reduce((a,b)=>a+b,0)/h;
+    return {n:r.length,avg,dominant,dir:d>0.3?'向好':(d<-0.3?'下滑':'平稳'),
+            level:avg>=3.5?'ok':(avg<2.5?'low':'mixed')};
+  }
+  function renderChat(){
+    window.jiananAvatar.sync(S.persona, true);
+    const p=curP();
+    document.getElementById('chatAva').textContent=p.ava;
+    document.getElementById('chatNm').textContent=p.n;
+    document.getElementById('chatTag').textContent=p.t;
+    document.getElementById('personaBar').innerHTML=PERSONAS.map(x=>
+      `<div class="pchip2 ${x.id===S.persona?'on':''}" onclick="pickPersona('${x.id}')">${x.a} ${x.n}</div>`).join('');
+
+    const t=trend(), chip=document.getElementById('trendChip');
+    if(t){
+      chip.style.display='block';
+      chip.innerHTML=`<span>📈</span><span>近 ${t.n} 次你多数感觉「<b>${t.dominant}</b>」，整体${t.dir} · 把这段状态告诉 TA ›</span>`;
+      chip.dataset.text=`我最近 ${t.n} 次打卡，多数感觉「${t.dominant}」，整体${t.dir}，想聊聊这段时间的状态。`;
+    } else chip.style.display='none';
+
+    renderMsgs();
+    const q=['我有点焦虑','又忍不住反复检查','今晚睡不着','心情很低落','只是想有人聊聊'];
+    document.getElementById('quickBar').innerHTML=q.map(x=>
+      `<div class="quick-chip" onclick="quickSend('${x}')">${x}</div>`).join('');
+  }
+  // —— IM 气泡：己方在右、对方在左，带头像与时间 ——
+  function isMe(m){ return m.role==='user'; }
+  function avaOf(m){ return isMe(m)?'我':(curP().ava||'岸'); }
+  function nameOf(m){ return isMe(m)?'我':curP().n; }
+  function fmtTime(ts){
+    if(!ts) return '';
+    const d=new Date(ts), n=new Date(), p=x=>String(x).padStart(2,'0');
+    const hm=p(d.getHours())+':'+p(d.getMinutes());
+    const sameDay=d.getFullYear()===n.getFullYear()&&d.getMonth()===n.getMonth()&&d.getDate()===n.getDate();
+    return sameDay?hm:((d.getMonth()+1)+'月'+d.getDate()+'日 '+hm);
+  }
+  function scrollMsgsToBottom(){
+    const l=document.getElementById('msgList');
+    if(!l) return;
+    l.scrollTop=l.scrollHeight;
+  }
+  function renderMsgs(){
+    const list=document.getElementById('msgList');
+    let html=msgs().map((m,i)=>`
+      <div class="msg-row ${isMe(m)?'me':'ai'}">
+        <div class="msg-ava">${esc(avaOf(m))}</div>
+        <div class="msg-col">
+          <div class="msg-meta"><span class="mn">${esc(nameOf(m))}</span><span class="mt">${esc(fmtTime(m.ts))}</span></div>
+          <div class="bubble">${m.streaming&&!m.content?'正在回复…':esc(m.content)}</div>
+          ${m.failed?`<div class="retry" onclick="retrySend(${i})">发送失败 · 点此重试</div>`:''}
+        </div>
+      </div>`).join('');
+    if(typing) html+=`<div class="msg-row ai">
+        <div class="msg-ava">${esc(curP().ava||'岸')}</div>
+        <div class="msg-col">
+          <div class="msg-meta"><span class="mn">${esc(curP().n)}</span></div>
+          <div class="bubble typing"><span></span><span></span><span></span><i>正在回复…</i></div>
+        </div>
+      </div>`;
+    // 警示一律排在最新一条消息之后：危机卡在前，后续提示按触发时间依次追加
+    if(S.crisis) html+=crisisHTML();
+    html+=chatAlerts.map(a=>
+      `<div class="chat-alert ${a.warn?'warn':''}"><span class="ca-ico">${a.warn?'⚠️':'💬'}</span><span class="ca-txt">${esc(a.text)}</span></div>`).join('');
+    list.innerHTML=html;
+    scrollMsgsToBottom();
+    requestAnimationFrame(scrollMsgsToBottom);
+  }
+  function crisisHTML(){
+    return `<div class="crisis-card">
+      <div class="h"><span>🆘 你很重要，请先照顾好自己</span><span class="x" onclick="dismissCrisis()">✕</span></div>
+      <div class="p">如果你有伤害自己的念头，请立刻联系专业援助，或告诉身边信任的人。</div>
+      <div class="call" onclick="dialTel('12356')">📞 拨打 12356 心理援助热线（24小时）</div>
+      <div class="call" style="background:#b4453c;margin-top:8px;" onclick="dialTel('400-161-9995')">📞 拨打 希望24热线（24小时 · 抑郁与自伤防治按2）</div>
+      <div class="call" style="background:#0e9488;margin-top:8px;" onclick="openSos()">📍 选择你所在省份的热线</div>
+    </div>`;
+  }
+  function dismissCrisis(){ S.crisis=false; save(); renderMsgs(); }
+  function tellTrend(){
+    const t=document.getElementById('trendChip').dataset.text;
+    if(t){ document.getElementById('chatInput').value=t; toast('已带入，可修改后发送'); }
+  }
+  function goChat(){ setTab('chat'); }
+  function pickPersona(id){
+    if(id===S.persona){ setTab('chat'); return; }
+    const talked=msgs().filter(m=>m.role==='user').length;
+    const go=()=>{ S.persona=id; save(); setTab('chat'); };
+    if(talked>0){
+      dialog('切换陪伴者',
+        `和「${curP().n}」的对话会保留，回来还能接着聊。要切换到「${PERSONAS.find(p=>p.id===id).n}」吗？`,
+        [{label:'留下',type:'cancel'},{label:'切换',fn:go}]);
+    } else go();
+  }
+  function startNewChat(){
+    dialog('开启新对话',`将清空和「${curP().n}」的这段聊天记录，无法恢复。`,
+      [{label:'再想想',type:'cancel'},{label:'清空并新开',type:'danger',fn:()=>{
+        S.chats[S.persona]=[{role:'assistant',content:greet(),ts:Date.now()}]; S.crisis=false; save(); renderChat(); toast('已开启新对话');
+      }}]);
+  }
+  function quickSend(t){ document.getElementById('chatInput').value=t; sendMsg(); }
+  // —— AI 接入方式 ——
+  // 桌面版（Electron，运行在 127.0.0.1）：主进程 main.js 内置 /chat 代理，同源直连大模型，Key 仅存主进程。
+  // 公网站（Node 服务）：同源 /chat 代理，Key 仅存服务端，同样无跨域问题，可真连。
+  // 两者都走「同源 /chat」，前端不持有任何 Key，绝无跨域失败、绝不返回假话术。
+  const IS_DESKTOP=(location.hostname==='127.0.0.1'||location.hostname==='localhost');
+  const AI_TARGET=location.origin+'/chat';   // 同源：桌面与公网统一
+  const API_BASE=AI_TARGET.split('/chat')[0]; // 同源基址，语音 /stt 也走这里
+  // 本地预览兜底：web/ 与 demo/ 是纯静态目录，双击 html（file://）或由不带后端的静态服务器打开时，
+  // 同源 /chat 根本不存在，AI 会直接报「连不上」。若本机已启动见岸服务（默认 3000，见 local-preview.js），改连它。
+  // 线上是 https，浏览器会拦截 http 明文请求，所以只在非 https 场景启用，公网链路不受任何影响。
+  const AI_LOCAL='http://127.0.0.1:3000';
+  const IS_LOCAL_SERVICE=['localhost','127.0.0.1'].includes(location.hostname) && location.protocol!=='file:';
+  const AI_FALLBACK=(location.protocol!=='https:' && !IS_LOCAL_SERVICE && (AI_LOCAL+'/chat')!==AI_TARGET)?AI_LOCAL+'/chat':'';
+
+  // 统一取 AI 回复：返回 { ok, reply, isCrisis, persona }；失败抛错（调用方提示，绝不返回假话术）
+  async function getAIReply(personaId, messages){
+    const body = { personaId, messages: messages||[] };
+    if(SET.aipingKey) body.apiKey = SET.aipingKey;   // 用户在设置里粘贴的 Key 优先
+    if(SET.apiBase) body.apiBase = SET.apiBase;     // 自定义接口地址，绕过被墙的 aiping
+    if(SET.model) body.model = SET.model;           // 自定义网关对应的模型名（如 deepseek-flash）
+    // 依次尝试：同源 /chat（正常链路）→ 本机见岸服务（本地预览兜底）
+    const targets=[]; if(location.protocol!=='file:') targets.push(AI_TARGET); if(AI_FALLBACK) targets.push(AI_FALLBACK);
+    let lastErr=null;
+    for(const target of targets){
+      const ctrl=new AbortController();
+      const t=setTimeout(()=>ctrl.abort(), 20000);
+      try{
+        const r=await fetch(target,{method:'POST',headers:{'Content-Type':'application/json'},
+          body:JSON.stringify(body),signal:ctrl.signal});
+        if(!r.ok) throw new Error('HTTP '+r.status);
+        const data=await r.json();
+        if(!data||data.ok===false) throw new Error((data&&data.error)||'bad');
+        return data;
+      }catch(e){ lastErr=e; }
+      finally{ clearTimeout(t); }
+    }
+    throw lastErr||new Error('未知错误');
+  }
+  // 失败原因归类：给一句能照着做的话，而不是笼统的「连不上」
+  function aiFailReason(e){
+    const m=String((e&&e.message)||e||'');
+    if(location.protocol==='file:') return '页面是 file:// 直接打开的，没有服务端处理 AI';
+    if(/Failed to fetch|NetworkError|Load failed|ERR_[A-Z_]+/i.test(m)) return '请求没发出去（'+m+'）';
+    if(/abort/i.test(m)) return '请求超时，请稍后重试';
+    return m||'网络异常';
+  }
+  function aiFailFix(){
+    if(location.protocol!=='https:')
+      return '请双击项目目录里的「启动见岸.bat」启动服务后打开 http://localhost:3000；也可以手动运行 node server.js 后打开 http://127.0.0.1:3000；';
+    return '请稍后重试或检查网络；若长时间不可用可能是接口额度问题。';
+  }
+
+  // 启动后静默自检 AI 连通性，状态条点一下可重测
+  async function checkAI(){
+    const el=document.getElementById('aiStatus'); if(!el) return;
+    el.className='ai-status checking'; el.textContent='· AI 连接检测中…';
+    try{
+      if(!SET.aipingKey){
+        const response=await fetch('/api/ai/status', {signal:AbortSignal.timeout(8000)});
+        if(response.status===401) throw Error('访问权限已过期，请刷新页面');
+        if(!response.ok) throw Error('本机服务异常（HTTP '+response.status+'）');
+        const config=await response.json();
+        if(!config.configured){
+          el.className='ai-status bad';
+          el.textContent='● 聊天模型未配置：请在 ⚙️ AI 设置中填写模型 Key，或由队友配置服务端。数字人连接不受影响。';
+          return;
+        }
+      }
+
+      const endpoint = SET.apiBase ? '（自定义接口）' : '（DeepSeek）';
+      el.className='ai-status ok'; el.textContent='● AI 已配置 '+endpoint+' · 发送消息即可开始';
+    }catch(e){
+      el.className='ai-status bad';
+      const tip = SET.apiBase ? '（点此重测 / 检查接口地址）' : '（点此重测 / 如需换接口去 ⚙️ 设置）';
+      el.textContent='● 聊天模型未连接：'+aiFailReason(e)+tip;
+    }
+  }
+
+  // 流式对话：边生成边渲染，首字通常在 1 秒内可见
+  async function streamReply(personaId, messages, onMeta, onDelta){
+    const body = { personaId, messages: messages||[] };
+    if(SET.aipingKey) body.apiKey = SET.aipingKey;
+    if(SET.apiBase) body.apiBase = SET.apiBase;
+    if(SET.model) body.model = SET.model;
+
+    const controller=new AbortController();
+    const timeout=setTimeout(()=>controller.abort(),45000);
+    let reader;
+    try {
+    const resp = await fetch(AI_TARGET.replace(/\/chat$/,'') + '/chat/stream', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(body), signal:controller.signal
+    });
+    if(!resp.ok) throw new Error('HTTP '+resp.status);
+    if(!resp.body || !resp.body.getReader) throw new Error('当前浏览器不支持流式读取');
+
+    reader = resp.body.getReader();
+    const decoder = new TextDecoder();
+    let buf = '', full = '';
+
+    for(;;){
+      const {done, value} = await reader.read();
+      if(done) break;
+      buf += decoder.decode(value, {stream:true});
+      let idx;
+      while((idx = buf.indexOf('\n\n')) >= 0){
+        const chunk = buf.slice(0, idx).trim();
+        buf = buf.slice(idx + 2);
+        if(!chunk.startsWith('data:')) continue;
+        let obj;
+        try{ obj = JSON.parse(chunk.slice(5).trim()); }catch(e){ continue; }
+        if(obj.type==='meta' || obj.type==='meta2'){ onMeta && onMeta(obj); }
+        else if(obj.type==='delta'){ full += obj.text || ''; onDelta && onDelta(obj.text||'', full); }
+        else if(obj.type==='error'){ throw new Error(obj.message || '流式请求失败'); }
+        else if(obj.type==='done'){ if(!full.trim()) throw Error('模型返回了空回复'); return full; }
+      }
+    }
+    throw Error('回复连接提前中断');
+    } finally { clearTimeout(timeout); if(reader){ try{ await reader.cancel(); }catch{} reader.releaseLock(); } }
+  }
+
+  const pendingChats=new WeakSet();
+  async function sendMsg(){
+    const inp=document.getElementById('chatInput'), v=inp.value.trim();
+    const personaId=S.persona, conversation=msgs();
+    if(!v)return;
+    if(pendingChats.has(conversation)){toast('正在回复上一条消息，请稍等');return;}
+    pendingChats.add(conversation);
+    conversation.push({role:'user',content:v,ts:Date.now()}); inp.value='';
+    const avatarTurn=window.jiananAvatar.begin();
+    const hist=conversation.filter(m=>!m.failed && m.content).map(m=>({role:m.role,content:m.content})).slice(-12);
+    const reply={role:'assistant',content:'',ts:Date.now(),streaming:true};
+    conversation.push(reply);
+    const attached=()=>S.chats[personaId]===conversation;
+    let lastPaint=0;
+    const paint=(force=false)=>{
+      if(!attached() || S.persona!==personaId)return;
+      if(!force && Date.now()-lastPaint<60)return;
+      lastPaint=Date.now();renderMsgs();
+    };
+    save();paint(true);
+    const timer=setTimeout(()=>{
+      if(attached() && !reply.content){reply.content='正在整理回复…';reply.placeholder=true;paint(true);}
+    },1800);
+    const meta=data=>{
+      if(data.isCrisis) S.crisis=true;
+      if(attached() && data.ocd) S.ocdHint=data.ocd.subtype+'/'+data.ocd.priority;
+      paint(true);
+    };
+    let answer='';
+    try{
+      try{
+        answer=await streamReply(personaId,hist,meta,(delta,full)=>{
+          clearTimeout(timer);delete reply.placeholder;reply.content=full;paint();
+        });
+      }catch(error){
+        if(!attached())return;
+        // 保留已显示的部分回复，普通请求成功后再替换。
+        const data=await getAIReply(personaId,hist);meta(data);
+        answer=String(data.reply||'');
+        if(!answer.trim())throw Error('模型返回了空回复');
+      }
+      if(!attached())return;
+      reply.content=answer;delete reply.placeholder;delete reply.streaming;
+      save();paint(true);
+      if(S.persona===personaId)window.jiananAvatar.speak(answer,avatarTurn);
+    }catch(error){
+      if(!attached())return;
+      const partial=reply.placeholder?'':reply.content;
+      reply.content=(partial?partial+'\n\n':'')+'回复未完成，请稍后重新发送。';
+      delete reply.placeholder;delete reply.streaming;
+      save();paint(true);
+      if(S.persona===personaId){
+        window.jiananAvatar.interrupt();
+        document.getElementById('avatarSubtitle').textContent=reply.content;
+        toast('暂时无法完成回复：'+aiFailReason(error));
+      }
+    }finally{
+      clearTimeout(timer);pendingChats.delete(conversation);
+    }
+  }
+  function retrySend(i){
+    const m=msgs()[i]; if(!m)return;
+    const list=msgs(); list.splice(i,1);
+    S.chats[S.persona]=list; save();
+    document.getElementById('chatInput').value=m.content; renderMsgs(); sendMsg();
+  }
+  function simulateCrisis(){ document.getElementById('chatInput').value='我真的撑不住了，觉得活着没意思'; sendMsg(); }
+  function simulateFailure(){
+    msgs().push({role:'user',content:'（演示）这条会发送失败',failed:true,ts:Date.now()});
+    save(); renderMsgs(); toast('已模拟一条失败消息，点「点此重试」可重发');
+  }
+  function esc(s){return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+
+  // ===== 语音输入（前端采集 16k PCM → WAV → 后端 /stt 百度识别）=====
+  // 不使用浏览器原生 Web Speech API：其识别走谷歌服务器，在中国大陆基本被墙，永远收不到结果。
+  // 新方案：getUserMedia 取麦克风流 → AudioContext 采集 16kHz 单声道 PCM → 编码 WAV → POST /stt（百度语音，中国大陆可用）。
+  let mediaStream=null, audioCtx=null, procNode=null, gainNode=null, voiceChunks=[], recordingVoice=false, cancelFlagVoice=false, voiceAutoTimer=null;
+
+  function voiceSupported(){
+    return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && (window.AudioContext||window.webkitAudioContext));
+  }
+  function floatConcat(chunks){ let len=0; chunks.forEach(c=>len+=c.length); const out=new Float32Array(len); let o=0; chunks.forEach(c=>{ out.set(c,o); o+=c.length; }); return out; }
+  function resampleFloat(input, fromRate, toRate){
+    if(fromRate===toRate) return input;
+    const ratio=fromRate/toRate; const n=Math.round(input.length/ratio); const out=new Float32Array(n);
+    for(let i=0;i<n;i++){ const idx=i*ratio; const i0=Math.floor(idx); const i1=Math.min(i0+1,input.length-1); const f=idx-i0; out[i]=input[i0]*(1-f)+input[i1]*f; }
+    return out;
+  }
+  function encodeWAV(samples, sampleRate){
+    const buffer=new ArrayBuffer(44+samples.length*2); const view=new DataView(buffer);
+    const ws=(o,s)=>{ for(let i=0;i<s.length;i++) view.setUint8(o+i, s.charCodeAt(i)); };
+    ws(0,'RIFF'); view.setUint32(4,36+samples.length*2,true); ws(8,'WAVE'); ws(12,'fmt ');
+    view.setUint32(16,16,true); view.setUint16(20,1,true); view.setUint16(22,1,true);
+    view.setUint32(24,sampleRate,true); view.setUint32(28,sampleRate*2,true); view.setUint16(32,2,true); view.setUint16(34,16,true);
+    ws(36,'data'); view.setUint32(40,samples.length*2,true);
+    let off=44; for(let i=0;i<samples.length;i++){ let s=Math.max(-1,Math.min(1,samples[i])); view.setInt16(off, s<0?s*0x8000:s*0x7FFF, true); off+=2; }
+    return buffer;
+  }
+  function bufToBase64(buf){ let bin=''; const bytes=new Uint8Array(buf); const chunk=0x8000; for(let i=0;i<bytes.length;i+=chunk){ bin+=String.fromCharCode.apply(null, bytes.subarray(i,i+chunk)); } return btoa(bin); }
+
+  function initVoiceUI(){
+    const btn=document.getElementById('voiceBtn'); if(!btn) return;
+    if(!voiceSupported()){ btn.style.display='none'; const inp=document.getElementById('chatInput'); if(inp) inp.placeholder='此设备不支持录音，可直接打字'; }
+  }
+
+  function toggleVoice(){
+    if(!voiceSupported()){ toast('当前设备不支持麦克风录音，请直接打字'); return; }
+    if(recordingVoice){ stopVoice(); } else { startVoice(); }
+  }
+
+  async function startVoice(){
+    const inp=document.getElementById('chatInput');
+    cancelFlagVoice=false; voiceChunks=[]; inp.dataset.base=(inp.value||'').trim();
+    try{ mediaStream=await navigator.mediaDevices.getUserMedia({audio:{channelCount:1, echoCancellation:true, noiseSuppression:true}}); }
+    catch(e){ toast('需要麦克风权限：'+(e&&e.message||e)); return; }
+    const AC=window.AudioContext||window.webkitAudioContext;
+    const want=16000;
+    try{ audioCtx=new AC({sampleRate:want}); }catch(e){ audioCtx=new AC(); }
+    try{ if(audioCtx.state==='suspended') await audioCtx.resume(); }catch(e){}
+    const src=audioCtx.createMediaStreamSource(mediaStream);
+    procNode=audioCtx.createScriptProcessor(4096,1,1);
+    procNode.onaudioprocess=(ev)=>{ const ch=ev.inputBuffer.getChannelData(0); voiceChunks.push(new Float32Array(ch)); };
+    gainNode=audioCtx.createGain(); gainNode.gain.value=0;   // 静音输出，仅用于驱动 onaudioprocess
+    src.connect(procNode); procNode.connect(gainNode); gainNode.connect(audioCtx.destination);
+    recordingVoice=true;
+    document.getElementById('voiceBtn').classList.add('recording'); document.getElementById('voiceBtn').textContent='⏹';
+    document.getElementById('voiceBar').style.display='flex'; document.getElementById('voiceTip').textContent='正在聆听…再点停止';
+    inp.placeholder='正在聆听…';
+    voiceAutoTimer=setTimeout(stopVoice, 58000);   // 百度短语音有长度上限，自动停止
+  }
+
+  function stopVoice(){
+    if(voiceAutoTimer){ clearTimeout(voiceAutoTimer); voiceAutoTimer=null; }
+    if(!recordingVoice && voiceChunks.length===0){ cleanupVoice(); return; }
+    recordingVoice=false;
+    const had=voiceChunks.length>0;
+    const raw=had?floatConcat(voiceChunks):null; voiceChunks=[];
+    cleanupVoice();
+    const inp=document.getElementById('chatInput');
+    document.getElementById('voiceBtn').classList.remove('recording'); document.getElementById('voiceBtn').textContent='🎤';
+    document.getElementById('voiceBar').style.display='none'; inp.placeholder='说点什么吧，也可以点麦克风说话';
+    if(!raw || raw.length===0){ if(had) toast('没录到声音，再试一次'); return; }
+    try{
+      const rate=audioCtx?audioCtx.sampleRate:16000;
+      const samples=resampleFloat(raw, rate, 16000);
+      const wav=encodeWAV(samples, 16000);
+      if(wav.byteLength<=44){ toast('没录到声音，再试一次'); return; }
+      sendVoice(bufToBase64(wav), wav.byteLength);
+    }catch(e){ toast('录音处理失败：'+(e&&e.message||e)); }
+  }
+
+  function cleanupVoice(){
+    try{ if(procNode){ procNode.disconnect(); procNode.onaudioprocess=null; } }catch(e){}
+    try{ if(gainNode) gainNode.disconnect(); }catch(e){}
+    try{ if(audioCtx) audioCtx.close(); }catch(e){}
+    try{ if(mediaStream) mediaStream.getTracks().forEach(t=>t.stop()); }catch(e){}
+    procNode=null; gainNode=null; audioCtx=null; mediaStream=null;
+  }
+
+  function cancelVoice(){
+    cancelFlagVoice=true;
+    if(voiceAutoTimer){ clearTimeout(voiceAutoTimer); voiceAutoTimer=null; }
+    recordingVoice=false; voiceChunks=[]; cleanupVoice();
+    const inp=document.getElementById('chatInput'); if(inp.dataset.base) inp.value=inp.dataset.base;
+    document.getElementById('voiceBtn').classList.remove('recording'); document.getElementById('voiceBtn').textContent='🎤';
+    document.getElementById('voiceBar').style.display='none'; inp.placeholder='说点什么吧，也可以点麦克风说话';
+  }
+
+  async function sendVoice(b64, len){
+    const inp=document.getElementById('chatInput');
+    if(!SET.baiduAK||!SET.baiduSK){ openSettings(); toast('麦克风需要百度语音 Key，请在设置里填写（点 ⚙️）'); return; }
+    document.getElementById('voiceTip').textContent='识别中…'; document.getElementById('voiceBar').style.display='flex';
+    try{
+      const r=await fetch(API_BASE+'/stt',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({audio:b64,len,apiKey:SET.baiduAK,secretKey:SET.baiduSK})});
+      const data=await r.json();
+      if(!data||data.ok===false){ if(data&&data.needConfig) openSettings(); throw new Error((data&&data.error)||'识别失败'); }
+      const text=(data.text||'').trim();
+      if(text){ inp.value=text; inp.focus(); toast('已识别，可修改后发送'); }
+      else toast('没听清，再试一次');
+    }catch(e){ toast('语音识别失败：'+(e&&e.message||e)); }
+    finally{ document.getElementById('voiceBar').style.display='none'; }
+  }
+
+  // ===== 社区 =====
+  let filter='全部';
+  function renderCommunity(){
+    const fl=['全部','温暖','低落','焦虑','迷茫','坚定'];
+    document.getElementById('filters').innerHTML=fl.map(f=>
+      `<div class="fchip ${f===filter?'on':''}" onclick="setFilter('${f}')">${f}</div>`).join('');
+    const list=filter==='全部'?S.wall:S.wall.filter(w=>w.mood===filter);
+    document.getElementById('wallCount').textContent=`（共 ${list.length} 条）`;
+    document.getElementById('wall').innerHTML=list.map(w=>`
+      <div class="wcard">
+        <div class="wm">${w.mood}</div>
+        <div class="wt">${esc(w.text)}</div>
+        <div class="wf">
+          <span class="wfrom">${w.seed?'见岸的话':'我写的'}</span>
+          ${w.seed?'':`<span class="wdel" onclick="delWall('${w.id}')">删除</span>`}
+        </div>
+      </div>`).join('');
+    document.getElementById('articleList').innerHTML=ARTICLES.map(a=>`
+      <div class="article" onclick="openArticle('${a.id}')">
+        <div class="em">${a.em}</div>
+        <div><div class="at">${a.t}</div><div class="ad">${a.d}</div></div>
+        <div class="ar">›</div></div>`).join('');
+  }
+  function setFilter(f){ filter=f; renderCommunity(); }
+  function addWall(){
+    dialog('写一句给此刻的自己','选择此刻的心情标签，再写一句话（演示将随机生成一条）。',
+      [{label:'写点什么',fn:()=>{
+        const moods=['温暖','低落','焦虑','迷茫','坚定'];
+        const texts=['今天比昨天多忍住了一次检查，这值得记下来。',
+                     '那些吓到自己的念头，不代表我。它们只是路过。',
+                     '我不知道什么时候会好，但今天我先好好过。',
+                     '撑到现在的自己，已经很不容易了。'];
+        S.wall.unshift({id:'w'+Date.now(),mood:moods[Math.floor(Math.random()*5)],
+          text:texts[Math.floor(Math.random()*texts.length)]});
+        save(); renderCommunity(); toast('已写在墙上');
+      }},{label:'再想想',type:'cancel'}]);
+  }
+  function delWall(id){ S.wall=S.wall.filter(w=>w.id!==id); save(); renderCommunity(); toast('已删除'); }
+
+  // ===== 文章详情 =====
+  const BODY={
+    ocd:{h:'强迫症到底是什么',meta:'轻科普 · 约 4 分钟',s:[
+      {t:'它不只是"爱干净"',p:'强迫症（OCD）以反复出现、不受控制的念头（强迫思维）和为了缓解焦虑而重复做的行为（强迫行为）为特征。'},
+      {q:'"我知道门已经锁了，可那个\'万一没锁\'的声音就是不散，我得回去拉第三次才敢走。"'},
+      {t:'真正的消耗在"停不下来"',p:'核心不是爱整洁，而是：一个念头冒出来，不去做点什么就极度不安，做了才短暂踏实，然后循环。'},
+      {t:'它不是性格缺陷',p:'强迫思维不是"你想太多"，而是大脑在威胁信号上卡住了。它可以被理解和改善。'}]},
+    check:{h:'为什么总忍不住反复检查',meta:'轻科普 · 约 5 分钟',s:[
+      {t:'那个"万一"是怎么来的',p:'检查短期降低了焦虑，大脑就把"检查=安全"记下来。下次不确定感一来，就自动想检查。'},
+      {q:'"我不是不信任自己，我只是没法忍受那个\'要是……怎么办\'的余地。"'},
+      {t:'打断循环的小办法',p:'给"不确定"留一点空间：做完一次后，告诉自己"就让它不确定着"，并记下你其实安然无恙。'}]},
+    intrusive:{h:'侵入性思维：脑子里的不速之客',meta:'轻科普 · 约 5 分钟',s:[
+      {t:'有念头 ≠ 你坏',p:'几乎每个人都会冒出奇怪、甚至可怕的念头。对多数人它一闪而过；对强迫症，它会被反复注意并当成危险信号。'},
+      {q:'"最可怕的不是那个念头，而是我以为\'有这种念头说明我坏\'。"'},
+      {t:'和念头保持距离',p:'念头像弹幕，你不需要每条都接。练习"哦，又来了"，而不是"为什么是我"。'}]},
+    erp:{h:'ERP：和恐惧共处的方法',meta:'轻科普 · 约 6 分钟',s:[
+      {t:'暴露 + 反应阻止',p:'ERP 是强迫症的一线心理疗法：主动接触让你焦虑的情境，同时忍住不做强迫行为，让大脑慢慢发现"不做也没出事"。'},
+      {t:'它很痛，但有效',p:'过程像肌肉锻炼，会有不适。务必在专业人员指导下进行，不要独自硬扛。'},
+      {q:'"把恐惧当成浪，看着它来，又看着它退。"'}]},
+    sleep:{h:'睡眠与情绪：夜里最难熬',meta:'轻科普 · 约 4 分钟',s:[
+      {t:'为什么晚上念头更凶',p:'疲惫让大脑抑制杂念的能力下降，安静的环境又放大了内心声音。'},
+      {t:'睡前可以做的事',p:'4-7-8 呼吸、把念头写下来"寄存"、白天多晒太阳。长期失眠建议就诊。'}]},
+    help:{h:'求助不是软弱',meta:'轻科普 · 约 4 分钟',s:[
+      {t:'什么时候该找专业帮助',p:'当反复的思维/行为明显占据时间、影响工作生活，或带来强烈痛苦时，心理咨询与精神科都能帮上忙。'},
+      {t:'求助是主动照顾自己',p:'就像牙疼去看牙医。越早介入，恢复越轻松。'},
+      {q:'"承认需要帮助，是我对自己最温柔的一次。"'}]},
+    support:{h:'身边人的支持',meta:'轻科普 · 约 5 分钟',s:[
+      {t:'别急着"劝好"',p:'"别想了""有什么好怕的"往往雪上加霜。先接住情绪，再谈办法。'},
+      {t:'可以怎么做',p:'陪伴就医、一起做放松练习、在他想检查时温和地说"我们再等等看"。你的稳定本身就有力量。'}]}
+  };
+  function openArticle(id){
+    const a=BODY[id]; if(!a)return;
+    document.getElementById('sheet').innerHTML=`
+      <span class="back" onclick="closeSheet()">‹ 返回</span>
+      <h2>${a.h}</h2><div class="meta">${a.meta}</div>
+      ${a.s.map(x=>`${x.t?`<h3>${x.t}</h3>`:''}${x.p?`<p>${x.p}</p>`:''}${x.q?`<blockquote>${x.q}</blockquote>`:''}`).join('')}
+      <div class="wall-link" onclick="goWall()">🌊 写一句给此刻的自己 ›</div>
+      <div class="disclaim">本内容仅作科普，不能替代专业诊断与治疗。如有需要请拨打 12356 或前往正规医疗机构。</div>`;
+    document.getElementById('sheet').classList.add('open');
+    document.getElementById('sheet').scrollTop=0;
+  }
+  function closeSheet(){ document.getElementById('sheet').classList.remove('open'); }
+  function goWall(){ closeSheet(); setTab('community'); addWall(); }
+
+  // ===== 数据：导出 / 导入 / 清除 =====
+  // 导出备份：把本机全部数据与配置序列化成 JSON 文件并触发浏览器下载，文件名带导出日期时间。
+  // 默认不含 API Key（安全考虑）；需要完整备份可在导出后的弹窗里再要一份含密钥版本。
+  const SECRET_SET_KEYS=['apiKey','aipingKey','baiduAK','baiduSK'];
+  // 备份格式标识，导入时用于校验
+  const BACKUP_FORMAT='jianan-backup';
+  // 导出/导入进行中标志：防重复点击
+  let busy=false;
+  function setBusy(on){
+    busy=!!on;
+    // 同步置灰「我的数据」卡片里的按钮，给用户明确的进行中反馈
+    document.querySelectorAll('.data-actions .dbtn, .dbtn.wide').forEach(function(el){
+      if(!el.dataset.origText) el.dataset.origText=el.textContent;
+      el.classList.toggle('is-busy',busy);
+      el.textContent=busy?'处理中…':el.dataset.origText;
+    });
+  }
+  function backupStamp(){
+    const d=new Date(), p=n=>String(n).padStart(2,'0');
+    return `${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}`;
+  }
+  function buildBackup(withKeys){
+    const src=(typeof SET!=='undefined'&&SET)?SET:{};
+    const settings={};
+    Object.keys(src).forEach(k=>{
+      settings[k]=(!withKeys&&SECRET_SET_KEYS.indexOf(k)>=0)?'':(typeof src[k]==='string'?src[k]:'');
+    });
+    return {app:'见岸',format:BACKUP_FORMAT,version:1,exportedAt:new Date().toISOString(),
+      includesApiKeys:!!withKeys,dataKey:KEY,data:S,settings:settings};
+  }
+  function downloadFile(filename,text){
+    const blob=new Blob([text],{type:'application/json;charset=utf-8'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url; a.download=filename; a.style.display='none';
+    document.body.appendChild(a); a.click();
+    setTimeout(function(){ if(a.parentNode)a.parentNode.removeChild(a); URL.revokeObjectURL(url); },1000);
+  }
+  function exportData(withKeys){
+    let text='';
+    try{
+      text=JSON.stringify(buildBackup(withKeys),null,2);
+      if(!text) throw new Error('序列化结果为空');
+      const name='见岸备份-'+backupStamp()+(withKeys?'-含密钥':'')+'.json';
+      downloadFile(name,text);
+      dialog('备份已导出',
+        '文件名：'+name+'\n包含 '+(S.moods||[]).length+' 条心情、'+Object.keys(S.chats||{}).length+' 段对话、'+(S.wall||[]).length+' 条心事、番茄 '+(((S.pomo||{}).done)||0)+' 个、冥想 '+(S.med||0)+' 次。\n'+
+        (withKeys?'（这份含你填写的 API Key，请妥善保管，不要外传。）':'（为安全起见未包含 API Key。）'),
+        withKeys?[{label:'知道了'}]:[{label:'知道了'},{label:'含密钥再导出',fn:function(){exportData(true);}}]);
+    }catch(err){
+      // 下载被浏览器拦下时退回剪贴板，保证数据还能带走
+      let copied=false;
+      try{ if(text&&navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(text); copied=true; } }catch(e2){}
+      dialog(copied?'导出失败，已改用剪贴板':'导出失败',
+        copied?'浏览器阻止了文件下载，备份内容已复制到剪贴板，请粘贴到备忘录保存。'
+              :'没能生成备份文件，请稍后重试或更换浏览器。\n'+(err&&err.message?err.message:''),
+        [{label:'知道了'}]);
+    }
+  }
+
+  // 导入恢复：读用户选择的备份文件，校验后覆盖本机数据。
+  // 无文件选择器（部分旧环境）时退回「从剪贴板粘贴 JSON」。
+  function importData(){
+    if(busy) return;
+    if(typeof document.createElement!=='function'){ importFromClipboard(); return; }
+    const input=document.createElement('input');
+    input.type='file';
+    input.accept='.json,application/json';
+    input.style.display='none';
+    document.body.appendChild(input);
+    input.addEventListener('change',function(){
+      const f=input.files&&input.files[0];
+      if(input.parentNode) input.parentNode.removeChild(input);
+      if(!f) return;
+      const reader=new FileReader();
+      reader.onload=function(){ applyBackup(String(reader.result||''),f.name); };
+      reader.onerror=function(){
+        dialog('导入失败','没能读取该文件，请确认文件没有被其他程序占用后重试。',[{label:'知道了'}]);
+      };
+      reader.readAsText(f,'utf-8');
+    });
+    input.click();
+  }
+
+  function importFromClipboard(){
+    if(navigator.clipboard&&navigator.clipboard.readText){
+      navigator.clipboard.readText().then(function(t){ applyBackup(t,'剪贴板'); })
+        .catch(function(){ dialog('导入失败','无法读取剪贴板。可改为直接选择备份文件导入。',[{label:'知道了'}]); });
+    }else{
+      dialog('导入失败','当前环境不支持读取文件或剪贴板，请在电脑上重新导出后重试。',[{label:'知道了'}]);
+    }
+  }
+
+  // 校验并应用备份内容；任何一步失败都只提示，不动原有数据
+  function applyBackup(text,sourceName){
+    let parsed=null;
+    try{ parsed=JSON.parse(text); }
+    catch(e){
+      dialog('无法识别',(sourceName||'所选内容')+'不是见岸导出的备份（JSON 解析失败）。请确认选对了文件。',[{label:'知道了'}]);
+      return;
+    }
+    if(!parsed||typeof parsed!=='object'||Array.isArray(parsed)){
+      dialog('无法识别','备份格式不正确，顶层应为一个对象。',[{label:'知道了'}]);
+      return;
+    }
+    // 新格式数据在 data 字段；旧格式键平铺在顶层
+    const data=(parsed.format===BACKUP_FORMAT&&parsed.data&&typeof parsed.data==='object'&&!Array.isArray(parsed.data))
+      ? parsed.data
+      : (parsed.data&&typeof parsed.data==='object'&&!Array.isArray(parsed.data)?parsed.data:parsed);
+    const srcKeys=Object.keys(data||{});
+    if(!srcKeys.length){
+      dialog('备份里没有数据','文件里没有找到可恢复的内容，可能是导出不完整。',[{label:'知道了'}]);
+      return;
+    }
+    const desc='心情 '+((data.moods||[]).length)+' 条、对话 '+Object.keys(data.chats||{}).length
+      +' 段、心事 '+((data.wall||[]).length)+' 条、番茄 '+(((data.pomo||{}).done)||0)
+      +' 个、冥想 '+(data.med||0)+' 次';
+
+    dialog('导入备份',
+      '将用备份覆盖当前数据：\n'+desc+'\n\n覆盖后无法撤销，建议先导出当前记录。',
+      [{label:'取消',type:'cancel'},{label:'导入并覆盖',fn:function(){ doApply(data,srcKeys,parsed.settings,desc); }}]);
+  }
+
+  function doApply(data,srcKeys,settings,desc){
+    setBusy(true);
+    let fail=0;
+    try{
+      // 逐字段写入，默认值兜底，避免备份里缺字段导致渲染报错
+      S=Object.assign(JSON.parse(JSON.stringify(DEF)),JSON.parse(JSON.stringify(data)));
+      S.wall=Array.isArray(S.wall)?S.wall:DEF.wall.slice();
+      S.moods=Array.isArray(S.moods)?S.moods:[];
+      S.chats=(S.chats&&typeof S.chats==='object'&&!Array.isArray(S.chats))?S.chats:{};
+      S.pomo=(S.pomo&&typeof S.pomo==='object')?S.pomo:{done:0};
+      if(typeof S.med!=='number') S.med=0;
+      save();
+      // 备份里带了设置就一并恢复，同样跳过空值以免清掉本机已填的 Key
+      if(settings&&typeof settings==='object'&&typeof SET!=='undefined'&&SET){
+        Object.keys(SET).forEach(function(k){
+          if(typeof settings[k]==='string'&&settings[k]!=='') SET[k]=settings[k];
+        });
+        if(typeof saveSettingsStore==='function') saveSettingsStore();
+      }
+      renderHome();
+      if(typeof renderChat==='function') renderChat();
+      if(typeof renderCommunity==='function') renderCommunity();
+    }catch(err){
+      fail=1;
+      setBusy(false);
+      dialog('导入失败','恢复过程中出错，原有数据已被保护。\n'+(err&&err.message?err.message:''),[{label:'知道了'}]);
+      return;
+    }
+    setBusy(false);
+    if(fail){
+      dialog('导入失败','部分数据未能恢复，请重试。',[{label:'知道了'}]);
+    }else{
+      dialog('导入完成','已恢复 '+srcKeys.length+' 项记录：'+desc+'。\n部分内容需要切换页面后才会刷新。',
+        [{label:'知道了',fn:function(){ if(typeof setTab==='function') setTab('about'); }}]);
+    }
+  }
+  function clearData(){
+    dialog('清除我的数据','将删除本机的全部记录：心情打卡、对话历史、番茄与冥想统计、手记。\n\n此操作不可恢复。',
+      [{label:'再想想',type:'cancel'},{label:'确认清除',type:'danger',fn:()=>{
+        S=JSON.parse(JSON.stringify(DEF)); save(); renderHome(); renderChat(); renderCommunity(); toast('已清除全部数据');
+      }}]);
+  }
+
+  // ===== 练习浮层 =====
+  let exTimer=null;
+  function clearEx(){ if(exTimer){clearInterval(exTimer);exTimer=null;} }
+  function closeExercise(){ clearEx(); document.getElementById('exercise').classList.remove('open'); }
+  function openExercise(type){
+    clearEx();
+    const body=document.getElementById('exerciseBody');
+    if(type==='breathe')renderBreathe(body);
+    else if(type==='ground')renderGround(body);
+    else if(type==='pomodoro')renderPomodoro(body);
+    else if(type==='meditation')renderMeditation(body);
+    document.getElementById('exercise').classList.add('open');
+    document.getElementById('exercise').scrollTop=0;
+  }
+
+  function renderBreathe(body){
+    body.innerHTML=`
+      <div class="ex-head"><span class="ex-back" onclick="closeExercise()">‹ 返回</span><span>🌬️ 呼吸训练</span></div>
+      <div class="rhythm">
+        <div class="rchip on" onclick="setRhythm(this,'478')">4-7-8 助眠</div>
+        <div class="rchip" onclick="setRhythm(this,'box')">4-4-4-4 平静</div>
+      </div>
+      <div class="breath-stage"><div class="breath-circle" id="bCircle"><span id="bPhase">准备</span><span id="bCount" class="bcount"></span></div></div>
+      <div class="breath-tip" id="bTip">跟随圆圈：变大时吸气，变小时呼气。</div>
+      <div class="breath-cycles">已完成 <b id="bCyc">0</b> 轮</div>`;
+    startBreathe('478');
+  }
+  function startBreathe(mode){
+    clearEx();
+    const P={'478':[{l:'吸气',s:4,to:1.7},{l:'屏息',s:7,to:1.7},{l:'呼气',s:8,to:1}],
+             'box':[{l:'吸气',s:4,to:1.7},{l:'屏息',s:4,to:1.7},{l:'呼气',s:4,to:1},{l:'屏息',s:4,to:1}]};
+    const p=P[mode]; let i=0,cyc=0;
+    const c=document.getElementById('bCircle'),ph=document.getElementById('bPhase'),
+          ct=document.getElementById('bCount'),tip=document.getElementById('bTip'),cy=document.getElementById('bCyc');
+    (function step(){
+      const x=p[i];
+      ph.textContent=x.l; ct.textContent=x.s;
+      c.style.transition=`transform ${x.s}s linear`; void c.offsetWidth;
+      c.style.transform=`scale(${x.to})`;
+      tip.textContent=x.l==='吸气'?'缓缓吸气，让腹部轻轻鼓起…'
+        :x.l==='呼气'?'慢慢吐气，把肩膀和眉头都松开…'
+        :(mode==='478'?'轻轻屏住，不用费力':'安静地停在这里，只是觉察');
+      let t=x.s;
+      exTimer=setInterval(()=>{
+        t--;
+        if(t>0){ct.textContent=t;}
+        else{clearInterval(exTimer);i=(i+1)%p.length;if(i===0){cyc++;cy.textContent=cyc;}step();}
+      },1000);
+    })();
+  }
+  function setRhythm(el,mode){
+    document.querySelectorAll('.rchip').forEach(c=>c.classList.remove('on'));
+    el.classList.add('on'); startBreathe(mode);
+  }
+
+  function renderGround(body){
+    const steps=[
+      {n:5,l:'看到',h:'环顾四周，在心里说出 5 件你此刻能看到的东西。'},
+      {n:4,l:'摸到',h:'感受 4 样身体能触摸到的：桌沿、衣料、手腕的温度…'},
+      {n:3,l:'听到',h:'闭上眼，捕捉 3 种声音：风、远处的车、自己的呼吸。'},
+      {n:2,l:'闻到',h:'留意 2 种气味，或想象两个让你安心的味道。'},
+      {n:1,l:'尝到',h:'觉察 1 种嘴里的味道，或喝一口水感受到的清凉。'}];
+    let idx=0;
+    body.innerHTML=`
+      <div class="ex-head"><span class="ex-back" onclick="closeExercise()">‹ 返回</span><span>🪨 着陆练习 5-4-3-2-1</span></div>
+      <div class="ground-prog" id="gProg"></div>
+      <div class="ground-card">
+        <div class="ground-num" id="gNum">5</div>
+        <div class="ground-label" id="gLabel">看到</div>
+        <div class="ground-hint" id="gHint"></div>
+        <div class="ground-btn" id="gBtn" onclick="groundNext()">我做到了 ›</div>
+      </div>
+      <div class="ground-foot">当念头把你卷走，这个练习帮你回到此刻的身体。</div>`;
+    function paint(){
+      const s=steps[idx];
+      document.getElementById('gNum').textContent=s.n;
+      document.getElementById('gLabel').textContent=s.l;
+      document.getElementById('gHint').textContent=s.h;
+      document.getElementById('gBtn').textContent=idx<steps.length-1?'我做到了 ›':'完成 ✓';
+      document.getElementById('gProg').innerHTML=steps.map((x,k)=>`<span class="gp ${k<=idx?'on':''}"></span>`).join('');
+    }
+    paint();
+    window.groundNext=function(){
+      if(idx<steps.length-1){idx++;paint();}
+      else{
+        document.getElementById('gNum').textContent='🌿';
+        document.getElementById('gLabel').textContent='你已回到此刻';
+        document.getElementById('gHint').textContent='做得很好。现在深吸一口气，再慢慢松开。';
+        const b=document.getElementById('gBtn');b.textContent='完成';b.onclick=closeExercise;
+        document.getElementById('gProg').innerHTML=steps.map(()=>`<span class="gp on"></span>`).join('');
+      }
+    };
+  }
+
+  function renderPomodoro(body){
+    const presets=[{w:25,b:5},{w:45,b:10},{w:15,b:3}];
+    let cur=presets[0],isCustom=false,phase='work',isLong=false,
+        remain=25*60,running=false,done=S.pomo.done||0,total=25*60;
+    let long=15,every=4,longOn=true,autoNext=false,task='';
+    body.innerHTML=`
+      <div class="ex-head"><span class="ex-back" onclick="closeExercise()">‹ 返回</span><span>🍅 番茄专注</span></div>
+      <div class="presets" id="pPresets"></div>
+      <div class="custom-box" id="pCustom" style="display:none;">
+        <span>专注</span><input id="cw" type="number" min="1" max="600" value="25"/><span>分</span>
+        <span>短休</span><input id="cb" type="number" min="1" max="120" value="5"/><span>分</span>
+        <span>长休</span><input id="cl" type="number" min="1" max="120" value="15"/><span>分</span>
+        <div class="pctrl" style="padding:9px 20px;" onclick="applyCustom()">应用</div>
+      </div>
+      <input class="task-input" id="pTask" placeholder="给这段专注起个名字（可选）" maxlength="20" oninput="pomoTask(this.value)"/>
+      <div class="opts">
+        <div class="opt" id="pAuto" onclick="pomoAuto()">连续开始下一段</div>
+        <div class="opt" id="pLong" onclick="pomoLong()">每 <span id="pEvery">4</span> 段长休息</div>
+      </div>
+      <div class="pomo-stage">
+        <svg viewBox="0 0 120 120" class="pomo-ring"><circle cx="60" cy="60" r="52" class="ring-bg"/><circle cx="60" cy="60" r="52" class="ring-fg" id="pRing"/></svg>
+        <div class="pomo-time" id="pTime">25:00</div>
+        <div class="pomo-phase" id="pPhase">专注</div>
+      </div>
+      <div class="pomo-ctrl"><div class="pctrl" id="pStart" onclick="pomoToggle()">开始</div><div class="pctrl ghost" onclick="pomoReset()">重置</div></div>
+      <div class="pomo-done">今日完成 <b id="pDone">0</b> 段</div>`;
+    const C=2*Math.PI*52; document.getElementById('pRing').style.strokeDasharray=C;
+    const fmt=s=>{const m=Math.floor(s/60),x=s%60;return `${String(m).padStart(2,'0')}:${String(x).padStart(2,'0')}`;};
+    function paint(){
+      document.getElementById('pTime').textContent=fmt(remain);
+      const p=document.getElementById('pPhase');
+      p.textContent=phase==='work'?(task?`专注 · ${task}`:'专注'):(isLong?`长休息 ${long} 分`:'休息');
+      p.style.color=phase==='work'?'#aef0e8':'#ffd9a0';
+      document.getElementById('pStart').textContent=running?'暂停':'开始';
+      document.getElementById('pDone').textContent=done;
+      document.getElementById('pAuto').classList.toggle('on',autoNext);
+      document.getElementById('pLong').classList.toggle('on',longOn);
+      document.getElementById('pEvery').textContent=every;
+      document.getElementById('pRing').style.strokeDashoffset=C*(1-remain/total);
+    }
+    function paintPresets(){
+      document.getElementById('pPresets').innerHTML=presets.map((p,i)=>
+        `<div class="pchip ${p.w===cur.w&&p.b===cur.b?'on':''}" onclick="pomoSet(${i})">${p.w}/${p.b}</div>`).join('')
+        +`<div class="pchip ${isCustom?'on':''}" onclick="showCustom()">自定义</div>`;
+    }
+    window.pomoTask=v=>{task=v;paint();};
+    window.pomoAuto=()=>{autoNext=!autoNext;paint();};
+    window.pomoLong=()=>{longOn=!longOn;paint();};
+    window.pomoSet=i=>{clearEx();cur=presets[i];isCustom=false;isLong=false;
+      document.getElementById('pCustom').style.display='none';
+      phase='work';total=cur.w*60;remain=total;running=false;paintPresets();paint();};
+    window.showCustom=()=>{const b=document.getElementById('pCustom');
+      b.style.display=b.style.display==='none'?'flex':'none';};
+    window.applyCustom=()=>{
+      const w=Math.max(1,Math.min(600,parseInt(document.getElementById('cw').value)||25));
+      const b=Math.max(1,Math.min(120,parseInt(document.getElementById('cb').value)||5));
+      const l=Math.max(1,Math.min(120,parseInt(document.getElementById('cl').value)||15));
+      document.getElementById('cw').value=w;document.getElementById('cb').value=b;document.getElementById('cl').value=l;
+      long=l;clearEx();cur={w,b};isCustom=true;phase='work';isLong=false;
+      total=w*60;remain=total;running=false;paintPresets();paint();toast(`已设为 ${w}/${b}，长休 ${l}`);
+    };
+    window.pomoToggle=function(){
+      if(running){running=false;clearEx();paint();return;}
+      running=true;paint();
+      exTimer=setInterval(()=>{
+        remain--;
+        if(remain<=0){
+          clearEx();running=false;
+          if(phase==='work'){
+            done++;S.pomo.done=done;save();
+            isLong=longOn&&(done%every===0);
+            const bk=isLong?long:cur.b;
+            phase='break';total=bk*60;remain=total;
+            toast(isLong?`已 ${every} 段，长休息 ${bk} 分钟`:'专注完成，休息一下');
+          }else{isLong=false;phase='work';total=cur.w*60;remain=total;toast('休息结束，继续加油');}
+          paint();
+          if(autoNext)window.pomoToggle();
+          return;
+        }
+        paint();
+      },1000);
+    };
+    window.pomoReset=()=>{clearEx();phase='work';isLong=false;total=cur.w*60;remain=total;running=false;paint();};
+    paintPresets();paint();
+  }
+
+  function renderMeditation(body){
+    const sessions=[
+      {id:'breath',t:'呼吸冥想',c:['找一个舒服的姿势，脊背自然挺直。','把注意力轻轻放在呼吸上，感受空气进出。','吸气…数到四。呼气…也数到四。','走神了没关系，注意到就温柔地带回呼吸。','就这样，和呼吸安静地待一会儿。']},
+      {id:'body',t:'身体扫描',c:['闭上眼，从头顶开始，一点点往下留意身体。','下巴、肩膀是不是绷着？试着松开。','把觉察带到胸口、腹部，不评判，只是知道。','腿脚是否发沉？让它们慢慢放松进椅子里。','全身扫过一遍，像被温水轻轻洗过。']},
+      {id:'kind',t:'慈心冥想',c:['把手放在心口，感受掌心的温度。','在心里对自己说：愿我平安，愿我健康。','想起一个你在乎的人，愿他也被善待。','把这份善意，也轻轻送给不太喜欢的人。','让温暖在胸口停留一会儿。']},
+      {id:'sleep',t:'入睡引导',c:['躺好，关掉灯，让身体沉进床里。','从脚趾开始放松，像退潮一样往上松。','小腿、大腿…腹部随呼吸轻轻起伏。','肩膀、眉心松开，今天的事先放下。','如果困意来了，就随它去。晚安。']}];
+    let ch=null,dur=180,el=0,running=false,si=0;
+    body.innerHTML=`
+      <div class="ex-head"><span class="ex-back" onclick="closeExercise()">‹ 返回</span><span>🧘 冥想引导</span></div>
+      <div id="mPick" class="m-pick"></div>
+      <div id="mStage" style="display:none;">
+        <div class="pomo-stage">
+          <svg viewBox="0 0 120 120" class="pomo-ring"><circle cx="60" cy="60" r="52" class="ring-bg"/><circle cx="60" cy="60" r="52" class="ring-fg" id="mRing" style="stroke:#c9b6f0"/></svg>
+          <div class="pomo-time" id="mTime">03:00</div>
+          <div class="pomo-phase" id="mName"></div>
+        </div>
+        <div class="m-guide" id="mGuide"></div>
+        <div class="pomo-ctrl"><div class="pctrl" id="mStart" onclick="medToggle()">开始</div><div class="pctrl ghost" onclick="medReset()">重选</div></div>
+      </div>`;
+    const C=2*Math.PI*52;document.getElementById('mRing').style.strokeDasharray=C;
+    document.getElementById('mPick').innerHTML=sessions.map(s=>
+      `<div class="m-sess" onclick="medPick('${s.id}')">${s.t}</div>`).join('');
+    const fmt=s=>{const m=Math.floor(s/60),x=s%60;return `${String(m).padStart(2,'0')}:${String(x).padStart(2,'0')}`;};
+    function paint(){
+      document.getElementById('mTime').textContent=fmt(dur-el);
+      document.getElementById('mGuide').textContent=ch.c[si];
+      document.getElementById('mStart').textContent=running?'暂停':'开始';
+      document.getElementById('mRing').style.strokeDashoffset=C*(1-(dur-el)/dur);
+    }
+    window.medPick=id=>{
+      ch=sessions.find(x=>x.id===id);si=0;el=0;running=false;dur=180;
+      document.getElementById('mPick').style.display='none';
+      document.getElementById('mStage').style.display='block';
+      document.getElementById('mName').textContent=ch.t;paint();
+    };
+    window.medToggle=function(){
+      if(running){running=false;clearEx();paint();return;}
+      running=true;paint();
+      exTimer=setInterval(()=>{
+        el++;
+        if(el>=dur){
+          running=false;clearEx();S.med=(S.med||0)+1;save();
+          document.getElementById('mGuide').textContent='这一次冥想结束了，慢慢睁开眼，带着这份安稳回到生活。';
+          document.getElementById('mStart').textContent='完成';paint();return;
+        }
+        if(el%12===0)si=(si+1)%ch.c.length;
+        paint();
+      },1000);
+    };
+    window.medReset=()=>{clearEx();ch=null;
+      document.getElementById('mPick').style.display='grid';
+      document.getElementById('mStage').style.display='none';};
+  }
+
+  initVoiceUI();
+  renderHome();
+</script>
+</body>
+</html>

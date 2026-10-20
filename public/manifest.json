@@ -1,0 +1,16 @@
+{
+  "name": "见岸 · 你的心灵避风港",
+  "short_name": "见岸",
+  "description": "一个愿意听你说话的 AI 心理陪伴者。匿名、温柔、不评判。",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f4f8f7",
+  "theme_color": "#0e9488",
+  "lang": "zh-CN",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

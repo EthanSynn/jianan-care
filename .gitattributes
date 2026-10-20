@@ -1,0 +1,4 @@
+* text=auto
+public/vendor/xingyun/xmovAvatar_e2e.js -text
+*.png binary
+*.jpg binary

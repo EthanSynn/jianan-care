@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: jianan-care
+    runtime: node
+    buildCommand: node --check server.js
+    startCommand: node server.js
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: DEEPSEEK_API_KEY
+        sync: false
+      - key: DEEPSEEK_BASE_URL
+        value: https://api.deepseek.com
+      - key: DEEPSEEK_MODEL
+        value: deepseek-flash
+      - key: DEEPSEEK_REASONING_EFFORT
+        value: none
+      - key: XINGYUN_APP_ID
+        sync: false
+      - key: XINGYUN_APP_SECRET
+        sync: false
+      - key: XINGYUN_XIAONUAN_APP_ID
+        sync: false
+      - key: XINGYUN_XIAONUAN_APP_SECRET
+        sync: false
+      - key: XINGYUN_ANXIN_APP_ID
+        sync: false
+      - key: XINGYUN_ANXIN_APP_SECRET
+        sync: false
