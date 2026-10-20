@@ -16,6 +16,8 @@
 
 ## GitHub 与部署
 
+[在 Render 创建部署](https://render.com/deploy?repo=https://github.com/EthanSynn/jianan-care-demo) · [浏览完整源码](https://github.com/EthanSynn/jianan-care-demo)
+
 完整部署步骤见 [部署说明](部署说明.md)。仓库附带 Render Blueprint 和 Dockerfile；GitHub Pages 无法运行本项目的 Node 后端。
 
 ## 本地运行
